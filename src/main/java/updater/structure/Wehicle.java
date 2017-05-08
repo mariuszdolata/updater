@@ -1,5 +1,5 @@
 package updater.structure;
 
-public class Export {
+public class Wehicle {
 
 }

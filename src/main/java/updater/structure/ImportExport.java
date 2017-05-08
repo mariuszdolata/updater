@@ -1,5 +1,5 @@
 package updater.structure;
 
-public class Import {
+public class ImportExport {
 
 }
