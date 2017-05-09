@@ -36,14 +36,14 @@ public class Company {
 	private Set<Phone> phones = new HashSet<Phone>();
 	private Set<Email> emails = new HashSet<Email>();
 	private Set<Website> websites = new HashSet<Website>();
-//	private Set<ImportExport> imports = new HashSet<ImportExport>();
-//	private Set<ImportExport> exports = new HashSet<ImportExport>();
-//	private Set<Pkd> pkds = new HashSet<Pkd>();
-//	private Set<Sic> sics = new HashSet<Sic>();
-//	private Set<Employment> employments = new HashSet<Employment>();
-//	private Set<Turnover> turnovers = new HashSet<Turnover>();
-//	private Set<Profit> profits = new HashSet<Profit>();
-//	private Set<Wehicle> wehicles = new HashSet<Wehicle>();
+	private Set<ImportExport> imports = new HashSet<ImportExport>();
+	private Set<ImportExport> exports = new HashSet<ImportExport>();
+	private Set<Pkd> pkds = new HashSet<Pkd>();
+	private Set<Sic> sics = new HashSet<Sic>();
+	private Set<Employment> employments = new HashSet<Employment>();
+	private Set<Turnover> turnovers = new HashSet<Turnover>();
+	private Set<Profit> profits = new HashSet<Profit>();
+	private Set<Wehicle> wehicles = new HashSet<Wehicle>();
 	
 	@Id
 //	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -142,54 +142,62 @@ public class Company {
 	public void setWebsites(Set<Website> websites) {
 		this.websites = websites;
 	}
-//	public Set<ImportExport> getImports() {
-//		return imports;
-//	}
-//	public void setImports(Set<ImportExport> imports) {
-//		this.imports = imports;
-//	}
-//	public Set<ImportExport> getExports() {
-//		return exports;
-//	}
-//	public void setExports(Set<ImportExport> exports) {
-//		this.exports = exports;
-//	}
-//	public Set<Pkd> getPkds() {
-//		return pkds;
-//	}
-//	public void setPkds(Set<Pkd> pkds) {
-//		this.pkds = pkds;
-//	}
-//	public Set<Sic> getSics() {
-//		return sics;
-//	}
-//	public void setSics(Set<Sic> sics) {
-//		this.sics = sics;
-//	}
-//	public Set<Employment> getEmployments() {
-//		return employments;
-//	}
-//	public void setEmployments(Set<Employment> employments) {
-//		this.employments = employments;
-//	}
-//	public Set<Turnover> getTurnovers() {
-//		return turnovers;
-//	}
-//	public void setTurnovers(Set<Turnover> turnovers) {
-//		this.turnovers = turnovers;
-//	}
-//	public Set<Profit> getProfits() {
-//		return profits;
-//	}
-//	public void setProfits(Set<Profit> profits) {
-//		this.profits = profits;
-//	}
-//	public Set<Wehicle> getWehicles() {
-//		return wehicles;
-//	}
-//	public void setWehicles(Set<Wehicle> wehicles) {
-//		this.wehicles = wehicles;
-//	}
+	@OneToMany(mappedBy="company")
+	public Set<ImportExport> getImports() {
+		return imports;
+	}
+	public void setImports(Set<ImportExport> imports) {
+		this.imports = imports;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<ImportExport> getExports() {
+		return exports;
+	}
+	public void setExports(Set<ImportExport> exports) {
+		this.exports = exports;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<Pkd> getPkds() {
+		return pkds;
+	}
+	public void setPkds(Set<Pkd> pkds) {
+		this.pkds = pkds;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<Sic> getSics() {
+		return sics;
+	}
+	public void setSics(Set<Sic> sics) {
+		this.sics = sics;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<Employment> getEmployments() {
+		return employments;
+	}
+	public void setEmployments(Set<Employment> employments) {
+		this.employments = employments;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<Turnover> getTurnovers() {
+		return turnovers;
+	}
+	public void setTurnovers(Set<Turnover> turnovers) {
+		this.turnovers = turnovers;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<Profit> getProfits() {
+		return profits;
+	}
+	public void setProfits(Set<Profit> profits) {
+		this.profits = profits;
+	}
+	@OneToMany(mappedBy="company")
+	public Set<Wehicle> getWehicles() {
+		return wehicles;
+	}
+	public void setWehicles(Set<Wehicle> wehicles) {
+		this.wehicles = wehicles;
+	}
 	
 	
 

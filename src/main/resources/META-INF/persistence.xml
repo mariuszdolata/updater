@@ -7,6 +7,16 @@
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>updater.structure.Company</class>
 		<class>updater.structure.Person</class>
+		<class>updater.structure.Email</class>
+		<class>updater.structure.Employment</class>
+		<class>updater.structure.ImportExport</class>
+		<class>updater.structure.Phone</class>
+		<class>updater.structure.Pkd</class>
+		<class>updater.structure.Profit</class>
+		<class>updater.structure.Sic</class>
+		<class>updater.structure.Turnover</class>
+		<class>updater.structure.Website</class>
+		<class>updater.structure.Wehicle</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />

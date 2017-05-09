@@ -1,6 +1,8 @@
 package updater.structure;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
@@ -10,11 +12,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name="websites", indexes={@Index(columnList="nip", name="nip")})
 public class Website {
-	@Id
 	private long id_website;
 	private long nip;
 	private String website;
 	private Company company;
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_website() {
 		return id_website;
 	}
@@ -34,7 +38,7 @@ public class Website {
 		this.website = website;
 	}
 	@ManyToOne
-	@JoinColumn(name="company")
+	@JoinColumn(name="company_id")
 	public Company getCompany() {
 		return company;
 	}

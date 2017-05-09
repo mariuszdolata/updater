@@ -1,6 +1,9 @@
 package updater.structure;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,6 +16,8 @@ public class Email {
 	private long nip;
 	private String email;
 	private Company company;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_email() {
 		return id_email;
 	}
