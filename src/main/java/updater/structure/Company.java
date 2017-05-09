@@ -6,12 +6,14 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import updater.importing.Source;
 
 @Entity
 @Table(name="companies", indexes={@Index(columnList="nip", name="nip")})
@@ -31,6 +33,8 @@ public class Company {
 	private String duns;
 	private String metaHbi;
 	
+	private Source source;
+	private Date timestamp;
 	
 	private Set<Person> persons = new HashSet<Person>();
 	private Set<Phone> phones = new HashSet<Phone>();
@@ -198,6 +202,20 @@ public class Company {
 	public void setWehicles(Set<Wehicle> wehicles) {
 		this.wehicles = wehicles;
 	}
+	public Source getSource() {
+		return source;
+	}
+	public void setSource(Source source) {
+		this.source = source;
+	}
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+	
 	
 	
 
