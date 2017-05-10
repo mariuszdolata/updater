@@ -89,7 +89,7 @@ public class LoadFileXlsx extends Load {
 	 * operacji na tych plikach
 	 */
 	public void selectFile() {
-		file = new File("D://hbi//test.xlsx");
+		file = new File("D://updater//sources//test.xlsx");
 		if (file.exists()) {
 			logger.info("File selected - " + file.getPath());
 			loadData();
