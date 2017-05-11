@@ -1,6 +1,7 @@
 package updater.importing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -63,23 +64,35 @@ public class LoadData {
 
 	/**
 	 * Metoda wczytujaca dane po wczesniejszym sprawdzeniu zrodla oraz formatu
+	 * W pierwszej kolejnosci wczytywane sa properties
+	 * W drugiej kolejnosci wczytywane sa dane i zwracany obiekt List<HbiExcel> wraz ze zmapowanymi danymi
+	 * 
+	 * Konieczne jest rozbudowanie funkcji wczytujacej dane z excela wg zrodla tak aby dane byly od razu mapowane.
 	 */
 	private void loadData() {
 		if (this.getSource() == Source.HBI) {
 			logger.info("HBI selected");
 			LoadFileXlsx sourceFile = null;
 			if (this.getSourceFormat() == SourceFormat.xlsx) {
+				
+				//wczytanie properties - ZROB PARSOWANIE itd
+				LoadProperties properties = new LoadProperties("D://updater//properties//hbi.properties");
+				HeaderRepository headerRepository = new HeaderRepository(properties.getProperties());
+				
 				//wczytanie danych
 				logger.info("xlsx selected");
 				sourceFile = new LoadFileXlsx();
 
-				// wczytanie rekorow
-				this.data = sourceFile.readRows(this.getSource());
-				//kontrolne wypisanie danych
+				// wczytanie rekorow w pierwszej postaci
+				this.data = sourceFile.readRowsXlsxHbi();
+				//kontrolne wypisanie danych nieposortowane
 				this.printData(data);
+				List<HbiExcel> dd = (List<HbiExcel>)data;
+				Collections.sort(dd, HbiExcel.Comparators.NIP);
+				logger.info("########################################");
+				this.printData(dd);
 				
-				//wczytanie properties
-				LoadProperties properties = new LoadProperties("D://updater//properties//hbi.properties");
+				
 				
 			} else {
 				logger.warn("source format not selected");

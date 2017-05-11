@@ -89,7 +89,7 @@ public class LoadFileXlsx extends Load {
 	 * operacji na tych plikach
 	 */
 	public void selectFile() {
-		file = new File("D://updater//sources//test.xlsx");
+		file = new File("D://updater//sources//test2.xlsx");
 		if (file.exists()) {
 			logger.info("File selected - " + file.getPath());
 			loadData();
@@ -218,11 +218,11 @@ public class LoadFileXlsx extends Load {
 	 *            - okresla zrodlo
 	 * @return - odczytane dane
 	 */
-	public List<? extends SourceBase> readRows(Source source) {
-		if (source == Source.HBI) {
+	public List<? extends SourceBase> readRowsXlsxHbi() {
 			List<HbiExcel> data = new ArrayList<HbiExcel>();
 			Iterator<Row> rows = this.sheet.iterator();
 			while (rows.hasNext()) {
+				HbiExcel hbiExcel;
 				Row currentRow = rows.next();
 				Iterator<Cell> cells = currentRow.iterator();
 				String[] currentObject = new String[27];
@@ -234,17 +234,21 @@ public class LoadFileXlsx extends Load {
 						currentObject[i] = value.getStringValue();
 						i++;
 					} catch (Exception e) {
-						logger.error("readRows() problem - check out of band!", e);
+						logger.error("readRows() problem - check out of band! i = "+i, e);
+						e.printStackTrace();
 					}
 				}
 				// dodanie jednego rekordu
-				data.add(new HbiExcel(currentObject));
+				HbiExcel oneRow = new HbiExcel(currentObject);
+				if(oneRow.isValid())
+					data.add(new HbiExcel(currentObject));
+				else
+					logger.warn("One row skipped, valid="+oneRow.isValid());
 
 			}
 			// zwrocenie listy rekordow
 			return data;
-		} else
-			return null;
+		
 	}
 
 }

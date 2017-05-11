@@ -27,7 +27,7 @@ public class Company {
 	private String street;
 	private String zip;
 	
-	private enum active{YES,NO};
+	private String active;
 	private String legalForm;
 	private Date startYear;
 	private String duns;
@@ -214,6 +214,12 @@ public class Company {
 	}
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+	public String getActive() {
+		return active;
+	}
+	public void setActive(String active) {
+		this.active = active;
 	}
 	
 	

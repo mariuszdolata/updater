@@ -1,10 +1,12 @@
 package updater.importing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.formula.functions.T;
 
 public class HeaderRepository {
 	private List<Header> headers = new ArrayList<Header>();
@@ -26,19 +28,24 @@ public class HeaderRepository {
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
-
-	public HeaderRepository(Properties properties, List<String> headersName) {
-		this.properties = properties;
-		boolean conditionReturn = true;
-		if (properties != null && headersName != null) {
-			
-			for(String s:headersName){
-				
-			}
-		} else
-			logger.error("properties == NULL or headersName == NULL! ");
-	}
 	
+	public HeaderRepository(Properties properties){
+		this.setProperties(properties);
+		List<?> list  = Collections.list(properties.propertyNames());
+		if(!list.isEmpty()){
+			printPropertiesKeyValue();
+//			for(Object o: list){
+//				logger.info("Property key="+o.toString());
+//			}
+		}else
+			logger.error("There is no any property!" );
+	}
+	/**
+	 * Metoda sprawdzajaca czy naglowki, properties nie sa puste oraz czy istnieja
+	 * @param properties
+	 * @param headersName
+	 * @return
+	 */
 	public boolean validateHeaders(Properties properties, List<String> headersName){
 		boolean conditionRerurn = true;
 		if (properties != null && headersName != null) {
@@ -49,6 +56,17 @@ public class HeaderRepository {
 		}
 		
 		return conditionRerurn;
+	}
+	/**
+	 * Metoda wypisuj¹ca w logach key/value z properties
+	 */
+	public void printPropertiesKeyValue(){
+		List<?> list = Collections.list(this.getProperties().propertyNames());
+		logger.info("printPropertiesKeyValue method, size of properties`s list="+list.size());
+		for(int i=0;i<list.size();i++){
+			Object o = list.get(i);
+			logger.info("key="+o.toString()+", value="+this.getProperties().getProperty(o.toString()));
+		}
 	}
 
 }

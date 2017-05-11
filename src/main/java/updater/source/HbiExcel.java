@@ -1,5 +1,7 @@
 package updater.source;
 
+import java.util.Comparator;
+
 import org.apache.log4j.Logger;
 
 public class HbiExcel extends SourceBase implements Comparable<HbiExcel> {
@@ -32,15 +34,21 @@ public class HbiExcel extends SourceBase implements Comparable<HbiExcel> {
 	private String certyfikaty;
 	private String url;
 	private String kadraZarzadzajaca;
+	private String vat;
+	/**
+	 * true dla dobrze zmapowanego obiektu, false dla obiektu do zignorowania
+	 */
+	private boolean valid = true;
 
 	public HbiExcel(String[] s) {
 
-		if (s.length == 27) {
+		if (s.length == 27 && s[3].length() > 10) {
 
 			this.setUlica(s[0]);
 			this.setKod(s[1]);
 			this.setMiasto(s[2]);
-			this.setNip(s[3]);
+			this.setNip(s[3].substring(0, 9));
+			this.setVat(s[3].substring(10));
 			this.setRegon(s[4]);
 			this.setKrs(s[5]);
 			this.setDzialalnoscZakonczona(s[6]);
@@ -64,8 +72,13 @@ public class HbiExcel extends SourceBase implements Comparable<HbiExcel> {
 			this.setCertyfikaty(s[24]);
 			this.setUrl(s[25]);
 			this.setKadraZarzadzajaca(s[26]);
-		} else
-			logger.error("Mapping error! - length of string table is " + s.length + " - should be 27!");
+		} else {
+			if (s.length != 27)
+				logger.error("Mapping error! - length of string table is " + s.length + " - should be 27!");
+			else if (s[3].length() < 10)
+				logger.error("nip error");
+			this.valid = false;
+		}
 
 	}
 
@@ -285,21 +298,50 @@ public class HbiExcel extends SourceBase implements Comparable<HbiExcel> {
 		this.kadraZarzadzajaca = kadraZarzadzajaca;
 	}
 
-	public int compareTo(HbiExcel o) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String getVat() {
+		return vat;
 	}
+
+	public void setVat(String vat) {
+		this.vat = vat;
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
+	}
+	
 
 	@Override
 	public String toString() {
-		return "HbiExcel [ulica=" + ulica + ", kod=" + kod + ", miasto=" + miasto + ", nip=" + nip + ", regon=" + regon
-				+ ", krs=" + krs + ", dzialalnoscZakonczona=" + dzialalnoscZakonczona + ", telefony=" + telefony
-				+ ", emaile=" + emaile + ", www=" + www + ", pkd=" + pkd + ", sic=" + sic + ", zatrudnienieLata="
-				+ zatrudnienieLata + ", obrot=" + obrot + ", zysk=" + zysk + ", formaPrawna=" + formaPrawna
-				+ ", rokZalozenia=" + rokZalozenia + ", duns=" + duns + ", nazwa=" + nazwa + ", zatrudnienie="
-				+ zatrudnienie + ", pojazdy=" + pojazdy + ", pojazdyLacznie=" + pojazdyLacznie + ", eksport=" + eksport
-				+ ", importt=" + importt + ", certyfikaty=" + certyfikaty + ", url=" + url + ", kadraZarzadzajaca="
-				+ kadraZarzadzajaca + "]";
+		return "HbiExcel [logger=" + logger + ", ulica=" + ulica + ", kod=" + kod + ", miasto=" + miasto + ", nip="
+				+ nip + ", regon=" + regon + ", krs=" + krs + ", dzialalnoscZakonczona=" + dzialalnoscZakonczona
+				+ ", telefony=" + telefony + ", emaile=" + emaile + ", www=" + www + ", pkd=" + pkd + ", sic=" + sic
+				+ ", zatrudnienieLata=" + zatrudnienieLata + ", obrot=" + obrot + ", zysk=" + zysk + ", formaPrawna="
+				+ formaPrawna + ", rokZalozenia=" + rokZalozenia + ", duns=" + duns + ", nazwa=" + nazwa
+				+ ", zatrudnienie=" + zatrudnienie + ", pojazdy=" + pojazdy + ", pojazdyLacznie=" + pojazdyLacznie
+				+ ", eksport=" + eksport + ", importt=" + importt + ", certyfikaty=" + certyfikaty + ", url=" + url
+				+ ", kadraZarzadzajaca=" + kadraZarzadzajaca + ", vat=" + vat + ", valid=" + valid + "]";
+	}
+
+	@Override
+	public int compareTo(HbiExcel another) {
+		if (Integer.parseInt(this.getNip()) < Integer.parseInt(another.getNip())) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
+	public static class Comparators{
+		public static Comparator<HbiExcel> NIP = new Comparator<HbiExcel>(){
+//			@Override
+			public int compare(HbiExcel o1, HbiExcel o2){
+				return Integer.parseInt(o1.getNip())-Integer.parseInt(o2.getNip());
+			}
+		};
 	}
 
 }
