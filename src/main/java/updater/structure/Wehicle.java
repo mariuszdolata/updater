@@ -22,7 +22,8 @@ public class Wehicle {
 	private long id_wehicle;
 	private long nip;
 	private String mark;
-	private String descriptionription;
+	private int quantity;
+	private String description;
 	private Company company;
 
 	private Source source;
@@ -48,11 +49,17 @@ public class Wehicle {
 	public void setMark(String mark) {
 		this.mark = mark;
 	}
-	public String getdescriptionription() {
-		return descriptionription;
+	public String getDescription() {
+		return description;
 	}
-	public void setdescriptionription(String descriptionription) {
-		this.descriptionription = descriptionription;
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 	@ManyToOne
 	@JoinColumn(name="company_id")

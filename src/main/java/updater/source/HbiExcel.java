@@ -42,12 +42,12 @@ public class HbiExcel extends SourceBase implements Comparable<HbiExcel> {
 
 	public HbiExcel(String[] s) {
 
-		if (s.length == 27 && s[3].length() > 10) {
+		if (s.length == 27 && s[3].length() > 11) {
 
 			this.setUlica(s[0]);
 			this.setKod(s[1]);
 			this.setMiasto(s[2]);
-			this.setNip(s[3].substring(0, 9));
+			this.setNip(s[3].substring(0, 10));
 			this.setVat(s[3].substring(10));
 			this.setRegon(s[4]);
 			this.setKrs(s[5]);
@@ -339,7 +339,10 @@ public class HbiExcel extends SourceBase implements Comparable<HbiExcel> {
 		public static Comparator<HbiExcel> NIP = new Comparator<HbiExcel>(){
 //			@Override
 			public int compare(HbiExcel o1, HbiExcel o2){
-				return Integer.parseInt(o1.getNip())-Integer.parseInt(o2.getNip());
+				if(Long.parseLong(o1.getNip())<Long.parseLong(o2.getNip()) )return -1;
+				else if (Long.parseLong(o1.getNip())==Long.parseLong(o2.getNip()) )return 0;
+				else return 1;
+//				return Integer.parseInt(o1.getNip())-Integer.parseInt(o2.getNip());
 			}
 		};
 	}

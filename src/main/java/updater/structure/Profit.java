@@ -22,7 +22,7 @@ public class Profit {
 
 	private long id_profit;
 	private long nip;
-	private Date year;
+	private int  year;
 	private BigDecimal profit;
 	private Company company;
 
@@ -43,10 +43,10 @@ public class Profit {
 	public void setNip(long nip) {
 		this.nip = nip;
 	}
-	public Date getYear() {
+	public int getYear() {
 		return year;
 	}
-	public void setYear(Date year) {
+	public void setYear(int year) {
 		this.year = year;
 	}
 	public BigDecimal getProfit() {

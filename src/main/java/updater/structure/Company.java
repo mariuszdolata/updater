@@ -29,7 +29,7 @@ public class Company {
 	
 	private String active;
 	private String legalForm;
-	private Date startYear;
+	private int startYear;
 	private String duns;
 	private String metaHbi;
 	
@@ -100,10 +100,11 @@ public class Company {
 	public void setLegalForm(String legalForm) {
 		this.legalForm = legalForm;
 	}
-	public Date getStartYear() {
+	
+	public int getStartYear() {
 		return startYear;
 	}
-	public void setStartYear(Date startYear) {
+	public void setStartYear(int startYear) {
 		this.startYear = startYear;
 	}
 	public String getDuns() {
@@ -220,6 +221,16 @@ public class Company {
 	}
 	public void setActive(String active) {
 		this.active = active;
+	}
+	@Override
+	public String toString() {
+		return "Company [idCompany=" + idCompany + ", nip=" + nip + ", regon=" + regon + ", krs=" + krs + ", name="
+				+ name + ", street=" + street + ", zip=" + zip + ", active=" + active + ", legalForm=" + legalForm
+				+ ", startYear=" + startYear + ", duns=" + duns + ", metaHbi=" + metaHbi + ", source=" + source
+				+ ", timestamp=" + timestamp + ", persons=" + persons + ", phones=" + phones + ", emails=" + emails
+				+ ", websites=" + websites + ", imports=" + imports + ", exports=" + exports + ", pkds=" + pkds
+				+ ", sics=" + sics + ", employments=" + employments + ", turnovers=" + turnovers + ", profits="
+				+ profits + ", wehicles=" + wehicles + "]";
 	}
 	
 	

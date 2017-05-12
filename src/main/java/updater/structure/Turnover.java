@@ -22,7 +22,7 @@ public class Turnover {
 	
 	private long id_turnover;
 	private long nip;
-	private Date year;
+	private int year;
 	private BigDecimal turnover;
 	private Company company;
 
@@ -43,10 +43,11 @@ public class Turnover {
 	public void setNip(long nip) {
 		this.nip = nip;
 	}
-	public Date getYear() {
+	
+	public int getYear() {
 		return year;
 	}
-	public void setYear(Date year) {
+	public void setYear(int year) {
 		this.year = year;
 	}
 	public BigDecimal getTurnover() {

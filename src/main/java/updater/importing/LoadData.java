@@ -30,6 +30,15 @@ public class LoadData {
 	 */
 	private List<? extends SourceBase> data;
 
+	
+	public List<? extends SourceBase> getData() {
+		return data;
+	}
+
+	public void setData(List<? extends SourceBase> data) {
+		this.data = data;
+	}
+
 	public Source getSource() {
 		return source;
 	}
