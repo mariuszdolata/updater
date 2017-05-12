@@ -106,6 +106,13 @@ public class Person {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Person [idPerson=" + idPerson + ", nip=" + nip + ", firstName=" + firstName + ", firstNameVariant="
+				+ firstNameVariant + ", middleName=" + middleName + ", lastName=" + lastName + ", fullName=" + fullName
+				+ ", position=" + position + ", company=" + company + ", source=" + source + ", timestamp=" + timestamp
+				+ "]";
+	}
 	
 
 }

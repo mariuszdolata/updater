@@ -82,6 +82,12 @@ public class Wehicle {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Wehicle [id_wehicle=" + id_wehicle + ", nip=" + nip + ", mark=" + mark + ", quantity=" + quantity
+				+ ", description=" + description + ", company=" + company + ", source=" + source + ", timestamp="
+				+ timestamp + "]";
+	}
 		
 
 }

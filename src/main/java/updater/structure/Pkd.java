@@ -74,6 +74,17 @@ public class Pkd {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	@Override
+	public String toString() {
+		return "Pkd [id_pkd=" + id_pkd + ", nip=" + nip + ", pkd=" + pkd + ", description=" + description + ", company="
+				+ company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 	
 }

@@ -25,6 +25,7 @@ public class Company {
 	
 	private String name;
 	private String street;
+	private String city;
 	private String zip;
 	
 	private String active;
@@ -222,16 +223,23 @@ public class Company {
 	public void setActive(String active) {
 		this.active = active;
 	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
 	@Override
 	public String toString() {
 		return "Company [idCompany=" + idCompany + ", nip=" + nip + ", regon=" + regon + ", krs=" + krs + ", name="
-				+ name + ", street=" + street + ", zip=" + zip + ", active=" + active + ", legalForm=" + legalForm
-				+ ", startYear=" + startYear + ", duns=" + duns + ", metaHbi=" + metaHbi + ", source=" + source
-				+ ", timestamp=" + timestamp + ", persons=" + persons + ", phones=" + phones + ", emails=" + emails
-				+ ", websites=" + websites + ", imports=" + imports + ", exports=" + exports + ", pkds=" + pkds
-				+ ", sics=" + sics + ", employments=" + employments + ", turnovers=" + turnovers + ", profits="
-				+ profits + ", wehicles=" + wehicles + "]";
+				+ name + ", street=" + street + ", city=" + city + ", zip=" + zip + ", active=" + active
+				+ ", legalForm=" + legalForm + ", startYear=" + startYear + ", duns=" + duns + ", metaHbi=" + metaHbi
+				+ ", source=" + source + ", timestamp=" + timestamp + ", persons=" + persons + ", phones=" + phones
+				+ ", emails=" + emails + ", websites=" + websites + ", imports=" + imports + ", exports=" + exports
+				+ ", pkds=" + pkds + ", sics=" + sics + ", employments=" + employments + ", turnovers=" + turnovers
+				+ ", profits=" + profits + ", wehicles=" + wehicles + "]";
 	}
+	
 	
 	
 	

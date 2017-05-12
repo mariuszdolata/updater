@@ -76,6 +76,11 @@ public class Profit {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Profit [id_profit=" + id_profit + ", nip=" + nip + ", year=" + year + ", profit=" + profit
+				+ ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 	
 }

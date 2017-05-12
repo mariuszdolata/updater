@@ -68,5 +68,10 @@ public class ImportExport {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "ImportExport [id_import_export=" + id_import_export + ", nip=" + nip + ", country=" + country
+				+ ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 }

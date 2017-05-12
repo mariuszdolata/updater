@@ -67,6 +67,11 @@ public class Website {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Website [id_website=" + id_website + ", nip=" + nip + ", website=" + website + ", company=" + company
+				+ ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 	
 

@@ -67,6 +67,11 @@ public class Phone {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Phone [id_phone=" + id_phone + ", nip=" + nip + ", number=" + number + ", company=" + company
+				+ ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 
 }

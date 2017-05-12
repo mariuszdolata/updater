@@ -75,6 +75,11 @@ public class Employment {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Employment [id_employment=" + id_employment + ", nip=" + nip + ", year=" + year + ", employment="
+				+ employment + ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 
 }

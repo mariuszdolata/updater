@@ -68,6 +68,11 @@ public class Email {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Email [id_email=" + id_email + ", nip=" + nip + ", email=" + email + ", company=" + company
+				+ ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 
 }

@@ -77,6 +77,11 @@ public class Turnover {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@Override
+	public String toString() {
+		return "Turnover [id_turnover=" + id_turnover + ", nip=" + nip + ", year=" + year + ", turnover=" + turnover
+				+ ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	}
 	
 	
 
