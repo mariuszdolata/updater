@@ -1,7 +1,9 @@
 package updater.source;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -212,7 +214,7 @@ public class TransformORM {
 		for (String s : pkds) {
 			Pkd p = new Pkd();
 			try {
-				String[] parts = s.split("|");
+				String[] parts = s.split("\\|");
 				p.setNip(nip);
 				p.setPkd(parts[0]);
 				p.setdescription(parts[1]);
@@ -233,7 +235,7 @@ public class TransformORM {
 			Sic sic = new Sic();
 			sic.setNip(nip);
 			try {
-				String[] parts = s.split("|");
+				String[] parts = s.split("\\|");
 				sic.setSic(parts[0]);
 				sic.setdescription(parts[1]);
 			} catch (IndexOutOfBoundsException e) {
@@ -246,14 +248,23 @@ public class TransformORM {
 			sic.setSource(source);
 			company.getSics().add(sic);
 		}
-		String[] zatrudnienia = subList.get(0).getSic().split(";");
+		String[] zatrudnienia = subList.get(0).getZatrudnienieLata().split(";");
 		for (String s : zatrudnienia) {
 			Employment e = new Employment();
 			try {
-				String[] parts = s.split("|");
+				String[] parts = s.split("\\|");
 				e.setNip(nip);
+				logger.info("employment parts[0]="+parts[0]+", parts[1]="+parts[1]);
 				e.setEmployment(Integer.parseInt(parts[1]));
-				e.setYear(new Date(Integer.parseInt(parts[0]), 1,1));
+				Date date = null;
+				try {
+					logger.info("data do parsowania = "+parts[0]);
+					date = new SimpleDateFormat("yyyy-mm-dd").parse(parts[0]);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				e.setYear(date);
 				e.setSource(source);
 			} catch (IndexOutOfBoundsException ex) {
 				logger.warn("Unable to split Employment by delimeter | - employment+Date=" + s);
@@ -269,9 +280,13 @@ public class TransformORM {
 		for (String s : obroty) {
 			Turnover t = new Turnover();
 			try {
-				String[] parts = s.split("|");
+				String[] parts = s.split("\\|");
 				t.setNip(nip);
+				parts[1]=parts[1].replaceAll(",", ".");
+				parts[1]=parts[1].replaceAll(" ","");
+				logger.info("turnover parts[0]="+parts[0]+", parts[1]="+parts[1]);
 				t.setTurnover(new BigDecimal(parts[1]));
+				logger.info("turnover parts[0]="+parts[0]+", parts[1]="+parts[1]);
 				t.setYear(Integer.parseInt(parts[0]));
 				t.setSource(source);
 			} catch (IndexOutOfBoundsException e) {
@@ -288,7 +303,7 @@ public class TransformORM {
 		for (String s : zyski) {
 			Profit p = new Profit();
 			try {
-				String[] parts = s.split("|");
+				String[] parts = s.split("\\|");
 				p.setNip(nip);
 				p.setYear(Integer.parseInt(parts[0]));
 				p.setProfit(new BigDecimal(parts[1]));
@@ -306,7 +321,7 @@ public class TransformORM {
 		Wehicle w = new Wehicle();
 		for (String s : pojazdy) {
 			try {
-				String[] parts = s.split("|");
+				String[] parts = s.split("\\|");
 				w.setNip(nip);
 				w.setMark(parts[0]);
 				w.setQuantity(Integer.parseInt(parts[1]));
