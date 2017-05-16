@@ -4,14 +4,20 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.UpdateTimestamp;
 
 import updater.importing.Source;
 
@@ -50,8 +56,11 @@ public class Company {
 	private Set<Profit> profits = new HashSet<Profit>();
 	private Set<Wehicle> wehicles = new HashSet<Wehicle>();
 	
+	
+	
+	
 	@Id
-//	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getIdCompany() {
 		return idCompany;
 	}
@@ -120,84 +129,84 @@ public class Company {
 	public void setMetaHbi(String metaHbi) {
 		this.metaHbi = metaHbi;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Person> getPersons() {
 		return persons;
 	}
 	public void setPersons(Set<Person> persons) {
 		this.persons = persons;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Phone> getPhones() {
 		return phones;
 	}
 	public void setPhones(Set<Phone> phones) {
 		this.phones = phones;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	public Set<Email> getEmails() {
 		return emails;
 	}
 	public void setEmails(Set<Email> emails) {
 		this.emails = emails;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Website> getWebsites() {
 		return websites;
 	}
 	public void setWebsites(Set<Website> websites) {
 		this.websites = websites;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<ImportExport> getImports() {
 		return imports;
 	}
 	public void setImports(Set<ImportExport> imports) {
 		this.imports = imports;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<ImportExport> getExports() {
 		return exports;
 	}
 	public void setExports(Set<ImportExport> exports) {
 		this.exports = exports;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Pkd> getPkds() {
 		return pkds;
 	}
 	public void setPkds(Set<Pkd> pkds) {
 		this.pkds = pkds;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Sic> getSics() {
 		return sics;
 	}
 	public void setSics(Set<Sic> sics) {
 		this.sics = sics;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Employment> getEmployments() {
 		return employments;
 	}
 	public void setEmployments(Set<Employment> employments) {
 		this.employments = employments;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Turnover> getTurnovers() {
 		return turnovers;
 	}
 	public void setTurnovers(Set<Turnover> turnovers) {
 		this.turnovers = turnovers;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Profit> getProfits() {
 		return profits;
 	}
 	public void setProfits(Set<Profit> profits) {
 		this.profits = profits;
 	}
-	@OneToMany(mappedBy="company")
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	public Set<Wehicle> getWehicles() {
 		return wehicles;
 	}
@@ -210,6 +219,7 @@ public class Company {
 	public void setSource(Source source) {
 		this.source = source;
 	}
+	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getTimestamp() {
 		return timestamp;

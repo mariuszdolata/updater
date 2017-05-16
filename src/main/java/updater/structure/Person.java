@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.UpdateTimestamp;
+
 import updater.importing.Source;
 
 @Entity
@@ -99,6 +101,7 @@ public class Person {
 	public void setSource(Source source) {
 		this.source = source;
 	}
+	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getTimestamp() {
 		return timestamp;
