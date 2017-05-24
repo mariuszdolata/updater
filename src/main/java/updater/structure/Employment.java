@@ -30,6 +30,14 @@ public class Employment {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	public Employment(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_employment() {
@@ -78,11 +86,39 @@ public class Employment {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "Employment [id_employment=" + id_employment + ", nip=" + nip + ", year=" + year + ", employment="
-				+ employment + ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id_employment ^ (id_employment >>> 32));
+		result = prime * result + ((year == null) ? 0 : year.hashCode());
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employment other = (Employment) obj;
+		if (id_employment != other.id_employment)
+			return false;
+		if (year == null) {
+			if (other.year != null)
+				return false;
+		} else if (!year.equals(other.year))
+			return false;
+		return true;
+	}
+	
 	
 
 }

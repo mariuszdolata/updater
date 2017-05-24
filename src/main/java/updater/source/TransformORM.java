@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import javax.persistence.EntityManager;
@@ -18,9 +20,11 @@ import org.apache.log4j.Logger;
 
 import updater.importing.Source;
 import updater.structure.Company;
-import updater.structure.Email;
+import updater.structure.CompanyEmail;
+import updater.structure.Domain;
 import updater.structure.Employment;
-import updater.structure.ImportExport;
+import updater.structure.Exports;
+import updater.structure.Imports;
 import updater.structure.Person;
 import updater.structure.Phone;
 import updater.structure.Pkd;
@@ -33,10 +37,12 @@ import updater.structure.Wehicle;
 public class TransformORM {
 	private Logger logger = Logger.getLogger(TransformORM.class);
 	private static final Logger parseLog = Logger.getLogger("parseLog");
+	private static final Logger parseLogSkipped = Logger.getLogger("parseLogSkipped");
 	private List<? extends SourceBase> unsortedData;
 	private List<? extends SourceBase> sortedData;
 	private Map<String, Company> companies = new HashMap<String, Company>();
 	private Source source;
+	private EntityManagerFactory entityManagerFactory;
 
 	public List<? extends SourceBase> getUnsortedData() {
 		return unsortedData;
@@ -70,13 +76,23 @@ public class TransformORM {
 		this.source = source;
 	}
 
+	public EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
+	}
+
+	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManagerFactory = entityManagerFactory;
+	}
+
 	/**
 	 * Konstruktor przeksztalcajacy tymczasowy format w zbior relacyjny
 	 * 
 	 * @param unsortedData
 	 * @param source
 	 */
-	public TransformORM(List<? extends SourceBase> unsortedData, Source source) {
+	public TransformORM(EntityManagerFactory entityManagerFactory, List<? extends SourceBase> unsortedData,
+			Source source) {
+		this.entityManagerFactory = entityManagerFactory;
 		this.setUnsortedData(unsortedData);
 		this.setSource(source);
 		if (source == Source.HBI) {
@@ -150,35 +166,51 @@ public class TransformORM {
 		parseLog.info("Selected NIP:" + String.valueOf(nip));
 		for (HbiExcel row : subList) {
 			try {
-				Person p = new Person();
+				Person p = new Person(nip, company, source);
 				String[] parts = row.getKadraZarzadzajaca().split("\\|");
-				p.setPosition(parts[1]);
-				String fullName = parts[0].trim();
-				parseLog.debug("nip: " + nip + ", fullName=" + fullName);
-				p.setFullName(fullName);
-				// proba podzialu imion
-				try {
-					String[] names = fullName.split(" ");
-					if (names.length >= 3) {
-						// first, middle, last
-						p.setFirstName(names[1]);
-						p.setMiddleName(names[2]);
-						p.setLastName(names[0]);
-						parseLog.debug("nip: " + nip + ", firstName=" + names[1] + ", middleName=" + names[2]
-								+ ", lastName=" + names[0]);
+				if (parts[0] != parts[0].toUpperCase()) {
+					// osoba
+					p.setPosition(parts[1]);
+					String fullName = parts[0].trim();
+					parseLog.debug("nip: " + nip + ", fullName=" + fullName);
+					p.setFullName(fullName.trim().replace(",", ""));
+					// proba podzialu imion
+					try {
+						String[] names = fullName.split(" ");
+						if (names.length >= 3) {
+							// first, middle, last
+							p.setFirstName(names[1].trim().replace(",", ""));
+							p.setMiddleName(names[2].trim().replace(",", ""));
+							p.setLastName(names[0].trim().replace(",", ""));
+							parseLog.debug("nip: " + nip + ", firstName=" + names[1] + ", middleName=" + names[2]
+									+ ", lastName=" + names[0]);
 
-					} else if (names.length == 2) {
-						p.setFirstName(names[1]);
-						p.setLastName(names[0]);
-						parseLog.debug("nip: " + nip + ", firstName=" + names[1] + ", lastName=" + names[0]);
+						} else if (names.length == 2) {
+							p.setFirstName(names[1].trim().replace(",", ""));
+							p.setLastName(names[0].trim().replace(",", ""));
+							parseLog.debug("nip: " + nip + ", firstName=" + names[1] + ", lastName=" + names[0]);
+						} else if (names.length == 1) {
+							p.setLastName(names[0].trim().replace(",", ""));
+						} else {
+							parseLogSkipped.info("SKIPPED PERSON for nip:" + nip);
+						}
+						if (names.length > 0) {
+							if (p.getLastName().length() > 2 && p.getFirstName().length() > 2) {
+								company.getPersons().add(p);
+
+							}
+						}
+
+					} catch (Exception e) {
+						parseLog.warn("nip: " + nip
+								+ " - Unable to split person for first, middle and lastName OR first and lastName ="
+								+ row.getKadraZarzadzajaca());
 					}
-					if(p.getLastName().length()>2)
-						company.getPersons().add(p);
-				} catch (IndexOutOfBoundsException e) {
-					parseLog.warn("nip: " + nip
-							+ " - Unable to split person for first, middle and lastName OR first and lastName ="
-							+ row.getKadraZarzadzajaca());
+				} else {
+					// spolka
+					parseLogSkipped.info("SKIPPED nip: " + nip + " ,company=" + row.getKadraZarzadzajaca());
 				}
+
 			} catch (IndexOutOfBoundsException ex) {
 				parseLog.warn("nip: " + nip + " - Unable to split person! for person and position ="
 						+ row.getKadraZarzadzajaca());
@@ -187,9 +219,11 @@ public class TransformORM {
 		parseLog.info("nip: " + nip + ", Person=>[" + company.getPersons().size() + "]");
 		// Wartosci pojedyncze
 		company.setNip(Long.parseLong(subList.get(0).getNip()));
-		company.setRegon(Long.parseLong(subList.get(0).getRegon()));
+		if (subList.get(0).getRegon().length() >= 4)
+			company.setRegon(Long.parseLong(subList.get(0).getRegon()));
 		parseLog.debug("nip: " + nip + ", regon=" + subList.get(0).getRegon());
-		company.setKrs(Long.parseLong(subList.get(0).getKrs()));
+		if (subList.get(0).getKrs().length() >= 4)
+			company.setKrs(Long.parseLong(subList.get(0).getKrs()));
 		parseLog.debug("nip: " + nip + ", krs=" + subList.get(0).getKrs());
 		// if (subList.get(0).getDzialalnoscZakonczona() == "NIE")
 		if (subList.get(0).getDzialalnoscZakonczona().contains("NIE")) {
@@ -213,24 +247,37 @@ public class TransformORM {
 		parseLog.debug("nip: " + nip + ", Street=" + company.getStreet());
 		company.setCity(subList.get(0).getMiasto());
 		parseLog.debug("nip: " + nip + ", City=" + company.getCity());
-		// Employment bez roku
-		Employment employmentWithOutYear = new Employment();
-		employmentWithOutYear.setNip(nip);
-		employmentWithOutYear.setEmployment(Integer.parseInt(subList.get(0).getZatrudnienie()));
-		employmentWithOutYear.setSource(source);
-		company.getEmployments().add(employmentWithOutYear);
-		parseLog.debug("nip: " + nip + ", Employments=" + company.getEmployments().toString());
+		try {
+			String[] cert = subList.get(0).getCertyfikaty().split("\\|");
+			if (cert.length == 2) {
+				company.setCertificate(cert[0]);
+				company.setCertifier(cert[1].replaceAll("Jednostka certyfikuj¹ca:", ""));
+			} else {
+				parseLog.warn("nip: " + nip + " unable to split certificate");
+			}
+		} catch (Exception e) {
+			parseLog.warn("nip: " + nip + " - There is no any certificate");
+		}
+		try {
+			Employment employmentWithOutYear = new Employment(nip, company, source);
+			employmentWithOutYear.setNip(nip);
+			employmentWithOutYear.setEmployment(Integer.parseInt(subList.get(0).getZatrudnienie()));
+			employmentWithOutYear.setSource(source);
+			company.getEmployments().add(employmentWithOutYear);
+			parseLog.debug("nip: " + nip + ", Employments=" + company.getEmployments().toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		String pojazdyLacznie = subList.get(0).getPojazdyLacznie();
 
 		// Wartosci multi rozdzielone wg delimeteru
 		try {
 			String[] telefony = subList.get(0).getTelefony().split(";");
 			for (String s : telefony) {
-				Phone p = new Phone();
-				p.setNip(nip);
+				Phone p = new Phone(nip, company, source);
 				p.setNumber(s);
-				p.setSource(this.getSource());
-				if(p.getNumber().length()>5)
+				if (p.getNumber().length() > 5)
 					company.getPhones().add(p);
 				parseLog.debug("nip: " + nip + ", Phone=" + p.toString());
 			}
@@ -241,26 +288,25 @@ public class TransformORM {
 		try {
 			String[] emaile = subList.get(0).getEmaile().split(";");
 			for (String s : emaile) {
-				Email e = new Email();
-				e.setNip(nip);
+				CompanyEmail e = new CompanyEmail(nip, company, source);
 				e.setEmail(s);
-				e.setSource(source);
-				if(e.getEmail().contains("@"))
-					company.getEmails().add(e);
-				parseLog.debug("nip: " + nip + ", Email=" + e.toString());
+				if (e.getEmail().contains("@"))
+					company.getCompanyEmails().add(e);
+				parseLog.debug("nip: " + nip + ", CompanyEmail=" + e.toString());
 			}
-			parseLog.info("nip: " + nip + ", Email=>[" + company.getEmails().size() + "]");
+			parseLog.info("nip: " + nip + ", CompanyEmail=>[" + company.getCompanyEmails().size() + "]");
 		} catch (PatternSyntaxException e) {
-			parseLog.warn("nip: " + nip + " - There is no Email object");
+			parseLog.warn("nip: " + nip + " - There is no CompanyEmail object");
 		}
 		try {
 			String[] websites = subList.get(0).getWww().split(";");
 			for (String s : websites) {
-				Website w = new Website();
-				w.setNip(nip);
-				w.setWebsite(s.replaceAll("https://", "").replaceAll("https://", "").replaceAll("www", ""));
-				w.setSource(source);
-				if(w.getWebsite().contains("."))
+				Website w = new Website(nip, company, source);
+				s = s.toLowerCase().replaceAll("https://", "").replaceAll("http://", "").replaceAll("www.", "");
+				// s=s.replaceAll("https://", "");
+				s = s.replaceAll("/", "");
+				w.setWebsite(s);
+				if (w.getWebsite().contains("."))
 					company.getWebsites().add(w);
 				parseLog.debug("nip: " + nip + ", Website=" + w.toString());
 			}
@@ -271,14 +317,12 @@ public class TransformORM {
 		try {
 			String[] pkds = subList.get(0).getPkd().split(";");
 			for (String s : pkds) {
-				Pkd p = new Pkd();
+				Pkd p = new Pkd(nip, company, source);
 				try {
 					String[] parts = s.split("\\|");
-					p.setNip(nip);
 					p.setPkd(parts[0]);
 					p.setDescription(parts[1]);
-					p.setSource(source);
-					if(p.getPkd().contains("."))
+					if (p.getPkd().contains("."))
 						company.getPkds().add(p);
 					parseLog.debug("nip: " + nip + ", Pkd=" + p.toString());
 				} catch (IndexOutOfBoundsException e) {
@@ -292,8 +336,7 @@ public class TransformORM {
 		try {
 			String[] sics = subList.get(0).getSic().split(";");
 			for (String s : sics) {
-				Sic sic = new Sic();
-				sic.setNip(nip);
+				Sic sic = new Sic(nip, company, source);
 				try {
 					String[] parts = s.split("\\|");
 					sic.setSic(parts[0]);
@@ -301,8 +344,7 @@ public class TransformORM {
 				} catch (IndexOutOfBoundsException e) {
 					parseLog.warn("nip: " + nip + " - Unable to split Sic by delimeter | - sic=" + s);
 				}
-				sic.setSource(source);
-				if(sic.getSic().length()>3)
+				if (sic.getSic().length() > 3)
 					company.getSics().add(sic);
 				parseLog.debug("nip: " + nip + ", Sic=" + sic.toString());
 			}
@@ -313,10 +355,9 @@ public class TransformORM {
 		try {
 			String[] zatrudnienia = subList.get(0).getZatrudnienieLata().split(";");
 			for (String s : zatrudnienia) {
-				Employment e = new Employment();
+				Employment e = new Employment(nip, company, source);
 				try {
 					String[] parts = s.split("\\|");
-					e.setNip(nip);
 					e.setEmployment(Integer.parseInt(parts[1]));
 					Date date = null;
 					try {
@@ -328,12 +369,11 @@ public class TransformORM {
 						parseLog.warn(e1.toString());
 					}
 					e.setYear(date);
-					e.setSource(source);
 				} catch (IndexOutOfBoundsException ex) {
 					parseLog.warn("nip: " + nip + " - Unable to split Employment by delimeter | - employment=" + s);
 
 				}
-				if(e.getEmployment()>0)
+				if (e.getEmployment() > 0)
 					company.getEmployments().add(e);
 				parseLog.debug("nip: " + nip + ", Employment=" + e.toString());
 			}
@@ -345,44 +385,43 @@ public class TransformORM {
 		try {
 			String[] obroty = subList.get(0).getObrot().split(";");
 			for (String s : obroty) {
-				Turnover t = new Turnover();
+				Turnover t = new Turnover(nip, company, source);
 				try {
 					String[] parts = s.split("\\|");
-					t.setNip(nip);
 					t.setTurnover(
 							new BigDecimal(parts[1].replaceAll(",", ".").replace((char) 160, '-').replaceAll("-", "")));
 					t.setYear(Integer.parseInt(parts[0]));
-					t.setSource(source);
+					if (t.getTurnover().toString().length() >= 1)
+						company.getTurnovers().add(t);
+					parseLog.debug("nip: " + nip + ", Turnover=" + t.toString());
 				} catch (IndexOutOfBoundsException e) {
 					parseLog.warn("nip: " + nip + " - Unable to split Turnover by delimeter | - turnover=" + s);
 				}
-				if(t.getTurnover().toString().length()>=1)
-					company.getTurnovers().add(t);
-				parseLog.debug("nip: " + nip + ", Turnover=" + t.toString());
 			}
 			parseLog.info("nip: " + nip + ", Turnover=>[" + company.getTurnovers().size() + "]");
 		} catch (PatternSyntaxException e) {
 			parseLog.warn("nip: " + nip + " - There is no Turnover object");
 		}
 		try {
-			String[] zyski = subList.get(0).getZysk().split(";");
-			for (String s : zyski) {
-				Profit p = new Profit();
-				try {
-					String[] parts = s.split("\\|");
-					p.setNip(nip);
-					p.setYear(Integer.parseInt(parts[0]));
-					p.setProfit(
-							new BigDecimal(parts[1].replaceAll(",", ".").replace((char) 160, '-').replaceAll("-", "")));
-					p.setSource(source);
-				} catch (PatternSyntaxException e) {
-					parseLog.warn("nip: " + nip + " - Unable to split Profit by delimeter | - turnover=" + s);
+			if (subList.get(0).getZysk().length() >= 4) {
+				String[] zyski = subList.get(0).getZysk().split(";");
+				for (String s : zyski) {
+					Profit p = new Profit(nip, company, source);
+					try {
+						String[] parts = s.split("\\|");
+						p.setYear(Integer.parseInt(parts[0]));
+						p.setProfit(new BigDecimal(
+								parts[1].replaceAll(",", ".").replace((char) 160, '-').replaceAll("-", "")));
+						if (p.getProfit().toString().length() >= 1)
+							company.getProfits().add(p);
+						parseLog.debug("nip: " + nip + ", Profits=" + p.toString());
+					} catch (PatternSyntaxException e) {
+						parseLog.warn("nip: " + nip + " - Unable to split Profit by delimeter | - turnover=" + s);
+					}
+
 				}
-				if(p.getProfit().toString().length()>=1)
-					company.getProfits().add(p);
-				parseLog.debug("nip: " + nip + ", Profits=" + p.toString());
+				parseLog.info("nip: " + nip + ", Profit=>[" + company.getProfits().size() + "]");
 			}
-			parseLog.info("nip: " + nip + ", Profit=>[" + company.getProfits().size() + "]");
 		} catch (PatternSyntaxException pse) {
 			parseLog.warn("nip: " + nip + " - There is no Profit object");
 		}
@@ -390,14 +429,12 @@ public class TransformORM {
 			String[] pojazdy = subList.get(0).getPojazdy().split(";");
 			for (String s : pojazdy) {
 				try {
-					Wehicle w = new Wehicle();
+					Wehicle w = new Wehicle(nip, company, source);
 					String[] parts = s.split("\\|");
-					w.setNip(nip);
 					w.setMark(parts[0]);
 					w.setQuantity(Integer.parseInt(parts[1]));
 					w.setDescription(parts[2]);
-					w.setSource(source);
-					if(w.getMark().length()>=1)
+					if (w.getMark().length() >= 1)
 						company.getWehicles().add(w);
 					parseLog.debug("nip: " + nip + ", Wehicle=" + w.toString());
 				} catch (IndexOutOfBoundsException e) {
@@ -411,11 +448,9 @@ public class TransformORM {
 		try {
 			String[] importy = subList.get(0).getImportt().split(";");
 			for (String s : importy) {
-				ImportExport country = new ImportExport();
+				Imports country = new Imports(nip, company, source);
 				country.setCountry(s);
-				country.setNip(nip);
-				country.setSource(source);
-				if(s.length()>=3)
+				if (s.length() >= 3)
 					company.getImports().add(country);
 				parseLog.debug("nip: " + nip + " ,import=" + country.toString());
 			}
@@ -426,11 +461,9 @@ public class TransformORM {
 		try {
 			String[] eksporty = subList.get(0).getEksport().split(";");
 			for (String s : eksporty) {
-				ImportExport country = new ImportExport();
-				country.setNip(nip);
+				Exports country = new Exports(nip, company, source);
 				country.setCountry(s);
-				country.setSource(source);
-				if(s.length()>=3)
+				if (s.length() >= 3)
 					company.getExports().add(country);
 				parseLog.debug("nip: " + nip + " ,export=" + country.toString());
 			}
@@ -440,27 +473,31 @@ public class TransformORM {
 		}
 		// Wartosci wielokrotne
 		parseLog.debug("Company object parsed - company=" + company.toString());
+		// Generowanie domen na podstawie stron www oraz email
+		company.generateDomains();
+		// Generowanie adresow emailowych
+		for (Person p : company.getPersons()) {
+			company.generatePersonEmail(p, company.getDomains());
+
+		}
 		return company;
 	}
 
 	public void printCompany(Company company) {
 		logger.info(company.toString());
 	}
-	
-	public void insertCompanies(){
+
+	public void insertCompanies() {
 		logger.info("EMF ready to create");
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("updater");
-		EntityManager entityManager = emf.createEntityManager();
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
 		entityManager.getTransaction().begin();
 		logger.info("transaction begin");
-		for(Company c: this.getCompanies().values()){
+		for (Company c : this.getCompanies().values()) {
 			entityManager.persist(c);
 		}
 		entityManager.getTransaction().commit();
 		logger.info("transaction.commit");
 		entityManager.close();
-		emf.close();
-		
-		
+
 	}
 }

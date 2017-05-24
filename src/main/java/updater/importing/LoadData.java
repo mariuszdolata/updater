@@ -25,6 +25,7 @@ public class LoadData {
 	// Okreœlenie zrodla danych (do mapowania oraz wiarygodnosci)
 	private Source source;
 	private SourceFormat sourceFormat;
+	private int number;
 	/**
 	 * lista przechowujaca dane wejsciowe z pliku excel/csv/sql
 	 */
@@ -55,7 +56,8 @@ public class LoadData {
 		this.sourceFormat = sourceFormat;
 	}
 
-	public LoadData() {
+	public LoadData(int number) {
+		this.number=number;
 		setSources();
 		loadData();
 
@@ -90,7 +92,7 @@ public class LoadData {
 				
 				//wczytanie danych
 				logger.info("xlsx selected");
-				sourceFile = new LoadFileXlsx();
+				sourceFile = new LoadFileXlsx(this.number);
 
 				// wczytanie rekorow w pierwszej postaci
 				this.data = sourceFile.readRowsXlsxHbi();

@@ -18,77 +18,98 @@ import org.hibernate.annotations.UpdateTimestamp;
 import updater.importing.Source;
 
 @Entity
-@Table(name="phones", indexes={@Index(columnList="nip", name="nip")})
-public class Phone {
-	private long id_phone;
+@Table(name = "domains", indexes = { @Index(columnList = "nip", name = "nip") })
+public class Domain {
+	private long id_domain;
 	private long nip;
-	private String number;
-	private Company company;
 
+	private String domain;
+
+	private Company company;
 	private Source source;
 	private Date timestamp;
-	
-	
-	
-	public Phone(long nip, Company company, Source source) {
+
+	public Domain(long nip, String domain, Company company, Source source) {
 		super();
 		this.nip = nip;
+		this.domain = domain;
 		this.company = company;
 		this.source = source;
 	}
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	public long getId_phone() {
-		return id_phone;
+
+	
+@Id
+@GeneratedValue(strategy=GenerationType.IDENTITY)
+	public long getId_domain() {
+		return id_domain;
 	}
-	public void setId_phone(long id_phone) {
-		this.id_phone = id_phone;
+
+	public void setId_domain(long id_domain) {
+		this.id_domain = id_domain;
 	}
+
 	public long getNip() {
 		return nip;
 	}
+
 	public void setNip(long nip) {
 		this.nip = nip;
 	}
-	public String getNumber() {
-		return number;
+
+	public String getDomain() {
+		return domain;
 	}
-	public void setNumber(String number) {
-		this.number = number;
+
+	public void setDomain(String domain) {
+		this.domain = domain;
 	}
 	@ManyToOne
 	@JoinColumn(name="company_id")
 	public Company getCompany() {
 		return company;
 	}
+
 	public void setCompany(Company company) {
 		this.company = company;
 	}
+
 	public Source getSource() {
 		return source;
 	}
+
 	public void setSource(Source source) {
 		this.source = source;
 	}
+
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getTimestamp() {
 		return timestamp;
 	}
+
+	/**
+	 * @param timestamp
+	 *            the timestamp to set
+	 */
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((number == null) ? 0 : number.hashCode());
+		result = prime * result + ((domain == null) ? 0 : domain.hashCode());
 		return result;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -99,15 +120,14 @@ public class Phone {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Phone other = (Phone) obj;
-		if (number == null) {
-			if (other.number != null)
+		Domain other = (Domain) obj;
+		if (domain == null) {
+			if (other.domain != null)
 				return false;
-		} else if (!number.equals(other.number))
+		} else if (!domain.equals(other.domain))
 			return false;
 		return true;
 	}
-	
 	
 
 }

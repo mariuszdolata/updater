@@ -31,6 +31,15 @@ public class Turnover {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	
+	public Turnover(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_turnover() {
@@ -80,11 +89,39 @@ public class Turnover {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "Turnover [id_turnover=" + id_turnover + ", nip=" + nip + ", year=" + year + ", turnover=" + turnover
-				+ ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((turnover == null) ? 0 : turnover.hashCode());
+		result = prime * result + year;
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Turnover other = (Turnover) obj;
+		if (turnover == null) {
+			if (other.turnover != null)
+				return false;
+		} else if (!turnover.equals(other.turnover))
+			return false;
+		if (year != other.year)
+			return false;
+		return true;
+	}
+	
 	
 	
 

@@ -31,6 +31,14 @@ public class Profit {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	public Profit(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_profit() {
@@ -79,11 +87,39 @@ public class Profit {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "Profit [id_profit=" + id_profit + ", nip=" + nip + ", year=" + year + ", profit=" + profit
-				+ ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((profit == null) ? 0 : profit.hashCode());
+		result = prime * result + year;
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Profit other = (Profit) obj;
+		if (profit == null) {
+			if (other.profit != null)
+				return false;
+		} else if (!profit.equals(other.profit))
+			return false;
+		if (year != other.year)
+			return false;
+		return true;
+	}
+	
 	
 	
 }

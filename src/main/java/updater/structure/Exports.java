@@ -9,6 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.SecondaryTable;
+import javax.persistence.SecondaryTables;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -19,7 +22,7 @@ import updater.importing.Source;
 
 @Entity
 @Table(indexes={@Index(columnList="nip", name="nip")})
-public class ImportExport {
+public class Exports {
 
 	private long id_import_export;
 	private long nip;
@@ -29,6 +32,14 @@ public class ImportExport {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	public Exports(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_import_export() {
@@ -71,10 +82,35 @@ public class ImportExport {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "ImportExport [id_import_export=" + id_import_export + ", nip=" + nip + ", country=" + country
-				+ ", company=" + company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((country == null) ? 0 : country.hashCode());
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Exports other = (Exports) obj;
+		if (country == null) {
+			if (other.country != null)
+				return false;
+		} else if (!country.equals(other.country))
+			return false;
+		return true;
+	}
+	
 	
 }

@@ -28,6 +28,14 @@ public class Website {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	public Website(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_website() {
@@ -70,11 +78,36 @@ public class Website {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "Website [id_website=" + id_website + ", nip=" + nip + ", website=" + website + ", company=" + company
-				+ ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((website == null) ? 0 : website.hashCode());
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Website other = (Website) obj;
+		if (website == null) {
+			if (other.website != null)
+				return false;
+		} else if (!website.equals(other.website))
+			return false;
+		return true;
+	}
+	
 	
 	
 

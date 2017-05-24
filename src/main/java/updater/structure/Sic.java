@@ -30,6 +30,14 @@ public class Sic {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	public Sic(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_sic() {
@@ -79,11 +87,36 @@ public class Sic {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "Sic [id_sic=" + id_sic + ", nip=" + nip + ", sic=" + sic + ", description=" + description + ", company="
-				+ company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((sic == null) ? 0 : sic.hashCode());
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Sic other = (Sic) obj;
+		if (sic == null) {
+			if (other.sic != null)
+				return false;
+		} else if (!sic.equals(other.sic))
+			return false;
+		return true;
+	}
+	
 	
 
 }

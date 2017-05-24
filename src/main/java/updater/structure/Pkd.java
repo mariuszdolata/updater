@@ -29,6 +29,14 @@ public class Pkd {
 	private Source source;
 	private Date timestamp;
 	
+	
+	
+	public Pkd(long nip, Company company, Source source) {
+		super();
+		this.nip = nip;
+		this.company = company;
+		this.source = source;
+	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_pkd() {
@@ -77,11 +85,36 @@ public class Pkd {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
-	public String toString() {
-		return "Pkd [id_pkd=" + id_pkd + ", nip=" + nip + ", pkd=" + pkd + ", description=" + description + ", company="
-				+ company + ", source=" + source + ", timestamp=" + timestamp + "]";
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((pkd == null) ? 0 : pkd.hashCode());
+		return result;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Pkd other = (Pkd) obj;
+		if (pkd == null) {
+			if (other.pkd != null)
+				return false;
+		} else if (!pkd.equals(other.pkd))
+			return false;
+		return true;
+	}
+	
 	
 	
 }

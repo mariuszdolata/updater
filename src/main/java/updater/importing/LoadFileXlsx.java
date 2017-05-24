@@ -21,6 +21,7 @@ public class LoadFileXlsx extends Load {
 	private String filePath;
 	private FileInputStream fis;
 	private XSSFWorkbook workBook;
+	private int number;
 	/**
 	 * aktualnie wykorzystywany arkusz
 	 */
@@ -75,8 +76,9 @@ public class LoadFileXlsx extends Load {
 	 * Konstruktor, ktory od razu startuje z metodami niezbednymi do obslugi
 	 * klasy
 	 */
-	public LoadFileXlsx() {
+	public LoadFileXlsx(int number) {
 		super();
+		this.number=number;
 		selectFile();
 	}
 
@@ -89,7 +91,7 @@ public class LoadFileXlsx extends Load {
 	 * operacji na tych plikach
 	 */
 	public void selectFile() {
-		file = new File("D://updater//sources//test2.xlsx");
+		file = new File("D://updater//sources//test"+this.number+".xlsx");
 		if (file.exists()) {
 			logger.info("File selected - " + file.getPath());
 			loadData();
