@@ -1,10 +1,12 @@
 package updater.structure;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,6 +46,14 @@ public class Company {
 	private String metaHbi;
 	private String certificate;
 	private String certifier;
+	
+	private BigDecimal turnover;
+	private int yearTurnover;
+	private BigDecimal profit;
+	private int yearProfit;
+	private BigDecimal ros;
+	private int employment;
+	private int yearEmployment;
 
 	private Source source;
 	private Date timestamp;
@@ -65,7 +75,8 @@ public class Company {
 	private Set<Profit> profits = new HashSet<Profit>();
 	private Set<Wehicle> wehicles = new HashSet<Wehicle>();
 	private Set<Domain> domains = new HashSet<Domain>();
-
+	private Set<Ros> ross = new HashSet<Ros>();
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public long getIdCompany() {
@@ -289,6 +300,14 @@ public class Company {
 	public void setCompanyEmails(Set<CompanyEmail> companyEmails) {
 		this.companyEmails = companyEmails;
 	}
+	@OneToMany(mappedBy="company", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	public Set<Ros> getRoss() {
+		return ross;
+	}
+
+	public void setRoss(Set<Ros> ross) {
+		this.ross = ross;
+	}
 
 	public Source getSource() {
 		return source;
@@ -324,11 +343,61 @@ public class Company {
 		this.city = city;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
+	public BigDecimal getTurnover() {
+		return turnover;
+	}
+
+	public void setTurnover(BigDecimal turnover) {
+		this.turnover = turnover;
+	}
+
+	public int getYearTurnover() {
+		return yearTurnover;
+	}
+
+	public void setYearTurnover(int yearTurnover) {
+		this.yearTurnover = yearTurnover;
+	}
+
+	public BigDecimal getProfit() {
+		return profit;
+	}
+
+	public void setProfit(BigDecimal profit) {
+		this.profit = profit;
+	}
+
+	public int getYearProfit() {
+		return yearProfit;
+	}
+
+	public void setYearProfit(int yearProfit) {
+		this.yearProfit = yearProfit;
+	}
+
+	public int getEmployment() {
+		return employment;
+	}
+
+	public void setEmployment(int employment) {
+		this.employment = employment;
+	}
+
+	public int getYearEmployment() {
+		return yearEmployment;
+	}
+
+	public void setYearEmployment(int yearEmploymeny) {
+		this.yearEmployment = yearEmploymeny;
+	}
+	public BigDecimal getRos() {
+		return ros;
+	}
+
+	public void setRos(BigDecimal ros) {
+		this.ros = ros;
+	}
+
 	@Override
 	public String toString() {
 		final int maxLen = 10;

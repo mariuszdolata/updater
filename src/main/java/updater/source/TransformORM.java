@@ -1,12 +1,14 @@
 package updater.source;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,14 +16,12 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.apache.log4j.Logger;
 
 import updater.importing.Source;
 import updater.structure.Company;
 import updater.structure.CompanyEmail;
-import updater.structure.Domain;
 import updater.structure.Employment;
 import updater.structure.Exports;
 import updater.structure.Imports;
@@ -29,6 +29,7 @@ import updater.structure.Person;
 import updater.structure.Phone;
 import updater.structure.Pkd;
 import updater.structure.Profit;
+import updater.structure.Ros;
 import updater.structure.Sic;
 import updater.structure.Turnover;
 import updater.structure.Website;
@@ -263,6 +264,9 @@ public class TransformORM {
 			employmentWithOutYear.setNip(nip);
 			employmentWithOutYear.setEmployment(Integer.parseInt(subList.get(0).getZatrudnienie()));
 			employmentWithOutYear.setSource(source);
+			Date dataZero = new Date();
+			dataZero.setYear(0);
+			employmentWithOutYear.setYear(dataZero);
 			company.getEmployments().add(employmentWithOutYear);
 			parseLog.debug("nip: " + nip + ", Employments=" + company.getEmployments().toString());
 		} catch (Exception e) {
@@ -411,7 +415,7 @@ public class TransformORM {
 						String[] parts = s.split("\\|");
 						p.setYear(Integer.parseInt(parts[0]));
 						p.setProfit(new BigDecimal(
-								parts[1].replaceAll(",", ".").replace((char) 160, '-').replaceAll("-", "")));
+								parts[1].replaceAll(",", ".").replace((char) 160, '#').replaceAll("#", "")));
 						if (p.getProfit().toString().length() >= 1)
 							company.getProfits().add(p);
 						parseLog.debug("nip: " + nip + ", Profits=" + p.toString());
@@ -480,6 +484,39 @@ public class TransformORM {
 			company.generatePersonEmail(p, company.getDomains());
 
 		}
+		// Ustawienie ostatniego zatrudnienia, obrotow oraz zyskow
+		try {
+			Pair lastEmployment = findLastEmployment(company.getEmployments());
+			company.setEmployment((Integer) lastEmployment.value);
+			company.setYearEmployment((Integer) lastEmployment.year);
+		} catch (Exception e) {
+			parseLogSkipped.info("nip: " + nip + ", unable to find last employment");
+		}
+		try {
+			Pair lastProfit = findLastProfit(company.getProfits());
+			company.setProfit((BigDecimal) lastProfit.value);
+			company.setYearProfit((Integer) lastProfit.year);
+		} catch (Exception e) {
+			parseLogSkipped.info("nip: " + nip + ", unable to find last profit");
+		}
+		try {
+			Pair lastTurnover = findLastTurnover(company.getTurnovers());
+			company.setTurnover((BigDecimal) lastTurnover.value);
+			company.setYearTurnover((Integer) lastTurnover.year);
+		} catch (Exception e) {
+			parseLogSkipped.info("nip: " + nip + ", unable to find last turnover");
+		}
+
+		// Wygenerowanie wspolczynnika ROS Return Of Sale
+		company.setRoss(generateROS(company.getProfits(), company.getTurnovers()));
+		parseLog.info("nip: " + nip + ", Ros=>[" + company.getRoss().size() + "]");
+		try {
+			if (company.getTurnover().doubleValue() > 0 && company.getTurnover() != null) {
+				company.setRos(company.getProfit().divide(company.getTurnover(), 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100")));
+			}
+		} catch (Exception e) {
+			parseLogSkipped.info("nip: " + nip + ", unable to compute last ROS");
+		}
 		return company;
 	}
 
@@ -499,5 +536,80 @@ public class TransformORM {
 		logger.info("transaction.commit");
 		entityManager.close();
 
+	}
+
+	public Pair findLastTurnover(Set<Turnover> turnovers) {
+		Iterator<Turnover> iterator = turnovers.iterator();
+		int maxYear = 0;
+		BigDecimal value = null;
+		while (iterator.hasNext()) {
+			Turnover tmp = iterator.next();
+			if (tmp.getYear() >= maxYear) {
+				maxYear = tmp.getYear();
+				value = tmp.getTurnover();
+			}
+		}
+		return new Pair(maxYear, value);
+	}
+
+	public Pair findLastProfit(Set<Profit> profits) {
+		Iterator<Profit> iterator = profits.iterator();
+		int maxYear = 0;
+		BigDecimal value = null;
+		while (iterator.hasNext()) {
+			Profit tmp = iterator.next();
+			if (tmp.getYear() >= maxYear) {
+				maxYear = tmp.getYear();
+				value = tmp.getProfit();
+			}
+		}
+		return new Pair(maxYear, value);
+	}
+
+	public Pair findLastEmployment(Set<Employment> employments) {
+		Iterator<Employment> iterator = employments.iterator();
+		int maxYear = 0;
+		int value = 0;
+		while (iterator.hasNext()) {
+			Employment tmp = iterator.next();
+			if (tmp.getYear().getYear() >= maxYear) {
+				maxYear = tmp.getYear().getYear();
+				value = tmp.getEmployment();
+			}
+		}
+		return new Pair(maxYear, value);
+	}
+
+	public class Pair<Integer, V> {
+		public Integer year;
+		public Object value;
+
+		public Pair(Integer a, V b) {
+			this.year = a;
+			this.value = b;
+		}
+	}
+
+	public Set<Ros> generateROS(Set<Profit> profits, Set<Turnover> turnovers) {
+		Set<Ros> ross = new HashSet<Ros>();
+		Iterator<Profit> iProfits = profits.iterator();
+		while (iProfits.hasNext()) {
+			Profit p = iProfits.next();
+			Iterator<Turnover> iTurnovers = turnovers.iterator();
+			while (iTurnovers.hasNext()) {
+				Turnover t = iTurnovers.next();
+				if (p.getYear() == t.getYear()) {
+					if (t.getTurnover().doubleValue() > 0) {
+						Ros r = new Ros(t.getNip(), t.getCompany(), t.getSource());
+						r.setRos((p.getProfit().divide(t.getTurnover(), 4).multiply(new BigDecimal("100"))));
+						r.setYear(t.getYear());
+						ross.add(r);
+					}
+					parseLogSkipped.info("nip:" + t.getNip() + ", SKIPPED ROS, divisor=" + t.getTurnover());
+				}
+			}
+		}
+
+		return ross;
 	}
 }

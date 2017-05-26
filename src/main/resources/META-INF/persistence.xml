@@ -15,6 +15,7 @@
 		<class>updater.structure.Phone</class>
 		<class>updater.structure.Pkd</class>
 		<class>updater.structure.Profit</class>
+		<class>updater.structure.Ros</class>
 		<class>updater.structure.Sic</class>
 		<class>updater.structure.Turnover</class>
 		<class>updater.structure.Website</class>

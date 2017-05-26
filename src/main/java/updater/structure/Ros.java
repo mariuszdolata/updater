@@ -1,7 +1,6 @@
 package updater.structure;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -20,13 +19,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import updater.importing.Source;
 
 @Entity
-@Table(name="turnovers", indexes={@Index(columnList="nip", name="nip")})
-public class Turnover implements Comparable<Turnover> {
-	
-	private long id_turnover;
+@Table(name="ross", indexes={@Index(columnList="nip", name="nip")})
+public class Ros {
+	private long id_profit;
 	private long nip;
-	private int year;
-	private BigDecimal turnover;
+	private int  year;
+	private BigDecimal ros;
 	private Company company;
 
 	private Source source;
@@ -34,8 +32,7 @@ public class Turnover implements Comparable<Turnover> {
 	
 	
 	
-	
-	public Turnover(long nip, Company company, Source source) {
+	public Ros(long nip, Company company, Source source) {
 		super();
 		this.nip = nip;
 		this.company = company;
@@ -43,11 +40,11 @@ public class Turnover implements Comparable<Turnover> {
 	}
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	public long getId_turnover() {
-		return id_turnover;
+	public long getId_profit() {
+		return id_profit;
 	}
-	public void setId_turnover(long id_turnover) {
-		this.id_turnover = id_turnover;
+	public void setId_profit(long id_profit) {
+		this.id_profit = id_profit;
 	}
 	public long getNip() {
 		return nip;
@@ -55,18 +52,17 @@ public class Turnover implements Comparable<Turnover> {
 	public void setNip(long nip) {
 		this.nip = nip;
 	}
-	
 	public int getYear() {
 		return year;
 	}
 	public void setYear(int year) {
 		this.year = year;
 	}
-	public BigDecimal getTurnover() {
-		return turnover;
+	public BigDecimal getRos() {
+		return ros;
 	}
-	public void setTurnover(BigDecimal turnover) {
-		this.turnover = turnover;
+	public void setRos(BigDecimal ros) {
+		this.ros = ros;
 	}
 	@ManyToOne
 	@JoinColumn(name="company_id")
@@ -90,20 +86,14 @@ public class Turnover implements Comparable<Turnover> {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((turnover == null) ? 0 : turnover.hashCode());
+		result = prime * result + ((ros == null) ? 0 : ros.hashCode());
 		result = prime * result + year;
 		return result;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -112,44 +102,18 @@ public class Turnover implements Comparable<Turnover> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Turnover other = (Turnover) obj;
-		if (turnover == null) {
-			if (other.turnover != null)
+		Ros other = (Ros) obj;
+		if (ros == null) {
+			if (other.ros != null)
 				return false;
-		} else if (!turnover.equals(other.turnover))
+		} else if (!ros.equals(other.ros))
 			return false;
 		if (year != other.year)
 			return false;
 		return true;
 	}
-	public int compareTo(Turnover o) {
-		if(this.getYear()<o.getYear())
-			return -1;
-		else if (this.getYear()==o.getYear())
-			return 0;
-		else 
-			return 1;
-	}
-	public static class Comparators{
-		public static Comparator<Turnover> YEAR = new Comparator<Turnover>(){
-
-			public int compare(Turnover o1, Turnover o2) {
-				if(o1.getYear()<o2.getYear())
-					return -1;
-				else if(o1.getYear()==o2.getYear())
-					return 0;
-				else return 1;
-			}
-			
-		};
-		public static Comparator<Turnover> VALUE = new Comparator<Turnover>(){
-
-			public int compare(Turnover o1, Turnover o2) {
-				return o1.getTurnover().compareTo(o2.getTurnover());
-			}
-			
-		};
-	}
+	
+	
 	
 	
 	
