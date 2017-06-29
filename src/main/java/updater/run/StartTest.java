@@ -33,7 +33,7 @@ public class StartTest {
 		// SourceBase> LoadData.data oraz ustalenie source Source
 		// LoadData.source
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("updater");
-		for (int i = 1; i <= 1; i++) {
+		for (int i = 1; i <= 12; i++) {
 			LoadData loadData = new LoadData(i);
 			TransformORM transformation = new TransformORM(entityManagerFactory, loadData.getData(), loadData.getSource());
 			System.gc();

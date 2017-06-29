@@ -22,17 +22,18 @@
 		<class>updater.structure.Wehicle</class>
 		<class>updater.structure.Domain</class>
 		<class>updater.structure.PersonEmail</class>
+		<class>updater.structure.Position</class>
 		<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.password" value="updater" />
+			<property name="hibernate.connection.password" value="updater_test" />
 			<property name="hibernate.connection.url"
-				value="jdbc:mysql://localhost:3306/updater?useTimezone=true&amp;serverTimezone=GMT" />
+				value="jdbc:mysql://localhost:3306/updater_test?useTimezone=true&amp;serverTimezone=GMT" />
 
-			<property name="hibernate.connection.username" value="updater" />
-			<property name="hibernate.default_schema" value="updater" />
+			<property name="hibernate.connection.username" value="updater_test" />
+			<property name="hibernate.default_schema" value="updater_test" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-			<property name="hibernate.hbm2ddl.auto" value="create" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.show_sql" value="false" />
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>
