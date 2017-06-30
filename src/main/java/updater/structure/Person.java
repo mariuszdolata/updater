@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,9 +37,11 @@ public class Person {
 	private String lastName;
 	private String fullName;
 	private String position;
-	private enum sex{M,F};
+	private enum Sex{M,F};
+	private Sex sex;
 	private Company company;
 	private Set<PersonEmail> personEmails=new HashSet<PersonEmail>();
+	private Set<Position> positions = new HashSet<Position>();
 	private Source source;
 	private Date timestamp;
 	
@@ -92,6 +96,13 @@ public class Person {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
+	@Enumerated(EnumType.STRING)
+	public Sex getSex() {
+		return sex;
+	}
+	public void setSex(Sex sex) {
+		this.sex = sex;
+	}
 	public String getPosition() {
 		return position;
 	}
@@ -118,6 +129,13 @@ public class Person {
 	}
 	public void setPersonEmails(Set<PersonEmail> personEmails) {
 		this.personEmails = personEmails;
+	}
+	@OneToMany(mappedBy="person", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	public Set<Position> getPositions() {
+		return positions;
+	}
+	public void setPositions(Set<Position> positions) {
+		this.positions = positions;
 	}
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)

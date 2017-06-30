@@ -3,6 +3,13 @@ package updater.structure;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -15,23 +22,23 @@ import updater.importing.Source;
 
 @Entity
 @Table(name="positions")
-
-
 public class Position {
 	private enum Degree {SPACJALISTA, KIEROWNIK, DYREKTOR, 
 		KONTROLER, W£AŒCICIEL, CZ£ONEK_ZARZ¥DU, PROKURENT,
 		};
-	private enum Dept {HR, MARKETING, FINANSE, IT, HANDEL, RD, ADUT, QA};
+	private enum Dept {HR, MARKETING, FINANSE, IT, HANDEL, RD, AUDYT, QA};
 	
 	private long id_position;
 	private long nip;
 	private String positionDesc;
-
+	private Degree degree;
+	private Dept dept;
 	private Person person;
-	private Company company;
-
+	
 	private Source source;
 	private Date timestamp;
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_position() {
 		return id_position;
 	}
@@ -50,14 +57,22 @@ public class Position {
 	public void setPositionDesc(String positionDesc) {
 		this.positionDesc = positionDesc;
 	}
-	
-	public Company getCompany() {
-		return company;
+	@Enumerated(EnumType.STRING)
+	public Degree getDegree() {
+		return degree;
 	}
-	public void setCompany(Company company) {
-		this.company = company;
+	public void setDegree(Degree degree) {
+		this.degree = degree;
 	}
-	
+	@Enumerated(EnumType.STRING)
+	public Dept getDept() {
+		return dept;
+	}
+	public void setDept(Dept dept) {
+		this.dept = dept;
+	}
+	@ManyToOne
+	@JoinColumn(name="person_id")
 	public Person getPerson() {
 		return person;
 	}
