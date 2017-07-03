@@ -28,6 +28,9 @@ import updater.structure.Imports;
 import updater.structure.Person;
 import updater.structure.Phone;
 import updater.structure.Pkd;
+import updater.structure.Position;
+import updater.structure.Position.Degree;
+import updater.structure.Position.Dept;
 import updater.structure.Profit;
 import updater.structure.Ros;
 import updater.structure.Sic;
@@ -150,6 +153,112 @@ public class TransformORM {
 		insertCompanies();
 
 	}
+	/**
+	 * Metoda tworzaca pozycje dla HBI z jednego stringu
+	 * @param pos
+	 * @param person
+	 * @return
+	 */
+	public Position hbiMappingPosition (String pos, Person person, Source source){
+		Position p = new Position();
+		p.setSource(source);
+		p.setNip(person.getNip());
+		p.setPositionDesc(pos);
+		p.setPerson(person);
+		//Przydzielenie stopnia
+		if(pos.contains("Dyrektor"))
+			p.setDegree(Degree.DYREKTOR);
+		else if (pos.contains("Kierownik"))
+			p.setDegree(Degree.KIEROWNIK);
+		else if (pos.contains("Cz³onek rady nadzorczej"))
+			p.setDegree(Degree.CZ£ONEK_RADY_NADZORCZEJ);
+		else if (pos.contains("G³ówny Ksiêgowy"))
+			p.setDegree(Degree.G£ÓWNY_KSIÊGOWY);
+		else if (pos.contains("Cz³onek zarz¹du"))
+			p.setDegree(Degree.CZ£ONEK_ZARZ¥DU);
+		else if (pos.contains("Cz³onek rady"))
+			p.setDegree(Degree.CZ£ONEK_RADY_NADZORCZEJ);
+		else if(pos.contains("Partner"))
+			p.setDegree(Degree.PARTNER);
+		else if(pos.contains("Prezes"))
+			p.setDegree(Degree.PREZES);
+		else if(pos.contains("Wiceprezes"))
+			p.setDegree(Degree.WICEPREZES);
+		else if(pos.contains("Specjalista"))
+			p.setDegree(Degree.SPACJALISTA);
+		else if(pos.contains("Prezesa"))
+			p.setDegree(Degree.PREZES);
+		else if(pos.contains("W³aœciciel"))
+			p.setDegree(Degree.W£AŒCICIEL);
+		else if(pos.contains("Prokurent"))
+			p.setDegree(Degree.PROKURENT);
+		else if(pos.contains("Pe³nomocnik"))
+			p.setDegree(Degree.PE£NOMOCNIK);
+		else if(pos.contains("karbnik"))
+			p.setDegree(Degree.SKARBNIK);
+		else if(pos.contains("Sekretarz"))
+			p.setDegree(Degree.SEKRETARZ);
+		else if(pos.contains("omplementariusz"))
+			p.setDegree(Degree.KOMPLEMENTARIUSZ);
+		else if(pos.contains("icedyrektor"))
+			p.setDegree(Degree.DYREKTOR);
+		
+		
+		else
+			p.setDegree(Degree.INNY);
+		
+		//Przydzielenie dzia³u
+		if(pos.contains("eneralny"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("adzorczej"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("arz¹du"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("arz¹dzaj¹c"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("siêgowy"))
+			p.setDept(Dept.FINANSE);
+		else if(pos.contains("inansowy"))
+			p.setDept(Dept.FINANSE);
+		else if(pos.contains("echnicznych"))
+			p.setDept(Dept.TECHNICZNY);
+		else if(pos.contains("przeda¿y"))
+			p.setDept(Dept.SPRZEDA¯);
+		else if(pos.contains("arketingu"))
+			p.setDept(Dept.SPRZEDA¯);
+		else if(pos.contains("rodukcji"))
+			p.setDept(Dept.PRODUKCJA);
+		else if(pos.contains("rokurent"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("Partner"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("iceprezes"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("e³nomocnik"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("yrektora"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("arz¹dzaj¹cego"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("rezes"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("karbnik"))
+			p.setDept(Dept.FINANSE);
+		else if(pos.contains("Sekretarz"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("omplementariusz"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("soba zarz¹dza"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("³aœciciel"))
+			p.setDept(Dept.ZARZ¥D);
+		else if(pos.contains("³onek rady"))
+			p.setDept(Dept.ZARZ¥D);
+		
+		else
+			p.setDept(Dept.INNY);
+		return p;
+	}
 
 	/**
 	 * Metoda tworzaca obiekt klasy Company z subListy wczytanej z excela dla
@@ -172,6 +281,8 @@ public class TransformORM {
 				if (parts[0] != parts[0].toUpperCase()) {
 					// osoba
 					p.setPosition(parts[1]);
+					Position position = hbiMappingPosition(parts[1], p, this.getSource());
+					p.getPositions().add(position);
 					String fullName = parts[0].trim();
 					parseLog.debug("nip: " + nip + ", fullName=" + fullName);
 					p.setFullName(fullName.trim().replace(",", ""));

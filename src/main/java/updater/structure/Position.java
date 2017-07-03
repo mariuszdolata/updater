@@ -23,10 +23,14 @@ import updater.importing.Source;
 @Entity
 @Table(name="positions")
 public class Position {
-	private enum Degree {SPACJALISTA, KIEROWNIK, DYREKTOR, 
+	public enum Degree {SPACJALISTA, KIEROWNIK, DYREKTOR, 
 		KONTROLER, W£AŒCICIEL, CZ£ONEK_ZARZ¥DU, PROKURENT,
+		PREZES, WICEPREZES, CZ£ONEK_RADY_NADZORCZEJ, G£ÓWNY_KSIÊGOWY,
+		PARTNER,INNY,PE£NOMOCNIK, SKARBNIK, KOMPLEMENTARIUSZ, KOMANDYTARIUSZ,
+		SEKRETARZ
 		};
-	private enum Dept {HR, MARKETING, FINANSE, IT, HANDEL, RD, AUDYT, QA};
+	public enum Dept {HR, FINANSE, IT, RD, AUDYT, QA,
+		ZARZ¥D, TECHNICZNY, SPRZEDA¯, PRODUKCJA, INNY};
 	
 	private long id_position;
 	private long nip;
