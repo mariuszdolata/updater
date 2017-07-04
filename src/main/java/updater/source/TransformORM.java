@@ -273,6 +273,49 @@ public class TransformORM {
 		return p;
 	}
 
+	public Company GLMapping(GLExcel row){
+		Company company = new Company();
+		//metoda tylko dla GoldenLine
+		company.setSource(Source.GoldenLine);
+		int charIndex=row.getImieINazwisko().indexOf("(");
+		if(charIndex!=-1){
+			//usuniecie nazwiska panienskiego
+			row.setImieINazwisko(row.getImieINazwisko().substring(0,charIndex));
+		}
+		row.setImieINazwisko(row.getImieINazwisko().trim());
+		String[] split=row.getImieINazwisko().split(" ");
+		//warunek dla imienia i nazwiska
+		//warunek konieczny aby kontunuowac parsowanie danych
+		if(split.length>=2){
+			Person person = new Person(0L, company, Source.GoldenLine);
+			person.setFirstName(split[0]);
+			person.setLastName(split[split.length-1]);
+			person.setFullName(split[0]+" "+split[split.length-1]);
+			
+		//mapowanie stanowiska oraz nazwy firmy
+			String[] splitPosition = row.getStanowiskoFirma().split(" - ");
+			if(splitPosition.length==2){
+				
+				
+				/***
+				 * 
+				 */
+				
+				
+				
+				
+				//company.setName();
+			}else if(splitPosition.length>=2){
+				
+			}else{
+				logger.warn("Unable to find an information about position in company");
+			}
+			
+		}else
+			logger.warn("Unable to create Person object for data from GoldenLine. Row="+row.toString());
+		
+		return company;
+	}
 	/**
 	 * Metoda tworzaca obiekt klasy Company z subListy wczytanej z excela dla
 	 * HBI
@@ -283,7 +326,8 @@ public class TransformORM {
 	 */
 	public Company hbiMapping(List<HbiExcel> subList) {
 		Company company = new Company();
-		company.setSource(this.getSource());
+		//metoda tylko dla HBI
+		company.setSource(Source.HBI);
 		// Osoby (iteracja calej subList
 		long nip = Long.parseLong(subList.get(0).getNip());
 		parseLog.info("Selected NIP:" + String.valueOf(nip));

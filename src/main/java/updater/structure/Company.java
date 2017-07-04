@@ -6,11 +6,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,6 +42,7 @@ public class Company {
 
 	private String active;
 	private String legalForm;
+	private LegalForm form;
 	private int startYear;
 	private String duns;
 	private String metaHbi;
@@ -397,6 +399,14 @@ public class Company {
 	public void setRos(BigDecimal ros) {
 		this.ros = ros;
 	}
+	@Enumerated(EnumType.STRING)
+	public LegalForm getForm() {
+		return form;
+	}
+
+	public void setForm(LegalForm form) {
+		this.form = form;
+	}
 
 	@Override
 	public String toString() {
@@ -485,6 +495,52 @@ public class Company {
 	}
 	public String replacePolishCharacters(String s){
 		return s.toLowerCase().replaceAll("ê", "e").replaceAll("ó", "o").replaceAll("¹", "a").replaceAll("œ", "s").replaceAll("³", "l").replaceAll("¿", "z").replaceAll("Ÿ", "z").replaceAll("æ", "c").replaceAll("ñ", "n");
+	}
+	/**
+	 * Metoda ustalaj¹ca typ firmy
+	 * @param s - legalForm dla HBI, nazwa firmy dla GoldenLine
+	 */
+	public void matchLegalForm(String s){
+		if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z o.o.")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z o.o")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka zo.o.")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}else if(s.toLowerCase().contains("spó³ka z ograniczon¹ odpowiedzialnoœci¹")){
+			this.setForm(LegalForm.SPÓ£KA_ZOO);
+		}
+			
 	}
 
 }
