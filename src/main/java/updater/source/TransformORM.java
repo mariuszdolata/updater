@@ -101,8 +101,20 @@ public class TransformORM {
 		this.setSource(source);
 		if (source == Source.HBI) {
 			ormHbi(unsortedData);
+		} else if (source == Source.GoldenLine) {
+
 		} else {
 			logger.error("Invalid source - this source is not implemented yet - source-" + source.toString());
+		}
+	}
+	/**
+	 * Metoda odpowiedzialna za przeksztalcenie postaci tymczasowej do
+	 * relacyjnej dla GL
+	 */
+	public void ormGoldenLine(List<? extends SourceBase> unsorted){
+	//proces sortowania wg NIP oraz wybieranie wszystkich rekordow firmy pominiety ze wzgledu na charakter danych
+		while(!unsorted.isEmpty()){
+			
 		}
 	}
 
@@ -153,20 +165,22 @@ public class TransformORM {
 		insertCompanies();
 
 	}
+
 	/**
 	 * Metoda tworzaca pozycje dla HBI z jednego stringu
+	 * 
 	 * @param pos
 	 * @param person
 	 * @return
 	 */
-	public Position hbiMappingPosition (String pos, Person person, Source source){
+	public Position hbiMappingPosition(String pos, Person person, Source source) {
 		Position p = new Position();
 		p.setSource(source);
 		p.setNip(person.getNip());
 		p.setPositionDesc(pos);
 		p.setPerson(person);
-		//Przydzielenie stopnia
-		if(pos.contains("Dyrektor"))
+		// Przydzielenie stopnia
+		if (pos.contains("Dyrektor"))
 			p.setDegree(Degree.DYREKTOR);
 		else if (pos.contains("Kierownik"))
 			p.setDegree(Degree.KIEROWNIK);
@@ -178,83 +192,82 @@ public class TransformORM {
 			p.setDegree(Degree.CZ£ONEK_ZARZ¥DU);
 		else if (pos.contains("Cz³onek rady"))
 			p.setDegree(Degree.CZ£ONEK_RADY_NADZORCZEJ);
-		else if(pos.contains("Partner"))
+		else if (pos.contains("Partner"))
 			p.setDegree(Degree.PARTNER);
-		else if(pos.contains("Prezes"))
+		else if (pos.contains("Prezes"))
 			p.setDegree(Degree.PREZES);
-		else if(pos.contains("Wiceprezes"))
+		else if (pos.contains("Wiceprezes"))
 			p.setDegree(Degree.WICEPREZES);
-		else if(pos.contains("Specjalista"))
+		else if (pos.contains("Specjalista"))
 			p.setDegree(Degree.SPACJALISTA);
-		else if(pos.contains("Prezesa"))
+		else if (pos.contains("Prezesa"))
 			p.setDegree(Degree.PREZES);
-		else if(pos.contains("W³aœciciel"))
+		else if (pos.contains("W³aœciciel"))
 			p.setDegree(Degree.W£AŒCICIEL);
-		else if(pos.contains("Prokurent"))
+		else if (pos.contains("Prokurent"))
 			p.setDegree(Degree.PROKURENT);
-		else if(pos.contains("Pe³nomocnik"))
+		else if (pos.contains("Pe³nomocnik"))
 			p.setDegree(Degree.PE£NOMOCNIK);
-		else if(pos.contains("karbnik"))
+		else if (pos.contains("karbnik"))
 			p.setDegree(Degree.SKARBNIK);
-		else if(pos.contains("Sekretarz"))
+		else if (pos.contains("Sekretarz"))
 			p.setDegree(Degree.SEKRETARZ);
-		else if(pos.contains("omplementariusz"))
+		else if (pos.contains("omplementariusz"))
 			p.setDegree(Degree.KOMPLEMENTARIUSZ);
-		else if(pos.contains("icedyrektor"))
+		else if (pos.contains("icedyrektor"))
 			p.setDegree(Degree.DYREKTOR);
-		
-		
+
 		else
 			p.setDegree(Degree.INNY);
-		
-		//Przydzielenie dzia³u
-		if(pos.contains("eneralny"))
+
+		// Przydzielenie dzia³u
+		if (pos.contains("eneralny"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("adzorczej"))
+		else if (pos.contains("adzorczej"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("arz¹du"))
+		else if (pos.contains("arz¹du"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("arz¹dzaj¹c"))
+		else if (pos.contains("arz¹dzaj¹c"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("siêgowy"))
+		else if (pos.contains("siêgowy"))
 			p.setDept(Dept.FINANSE);
-		else if(pos.contains("inansowy"))
+		else if (pos.contains("inansowy"))
 			p.setDept(Dept.FINANSE);
-		else if(pos.contains("echnicznych"))
+		else if (pos.contains("echnicznych"))
 			p.setDept(Dept.TECHNICZNY);
-		else if(pos.contains("przeda¿y"))
+		else if (pos.contains("przeda¿y"))
 			p.setDept(Dept.SPRZEDA¯);
-		else if(pos.contains("arketingu"))
+		else if (pos.contains("arketingu"))
 			p.setDept(Dept.SPRZEDA¯);
-		else if(pos.contains("rodukcji"))
+		else if (pos.contains("rodukcji"))
 			p.setDept(Dept.PRODUKCJA);
-		else if(pos.contains("rokurent"))
+		else if (pos.contains("rokurent"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("Partner"))
+		else if (pos.contains("Partner"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("iceprezes"))
+		else if (pos.contains("iceprezes"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("e³nomocnik"))
+		else if (pos.contains("e³nomocnik"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("yrektora"))
+		else if (pos.contains("yrektora"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("arz¹dzaj¹cego"))
+		else if (pos.contains("arz¹dzaj¹cego"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("rezes"))
+		else if (pos.contains("rezes"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("karbnik"))
+		else if (pos.contains("karbnik"))
 			p.setDept(Dept.FINANSE);
-		else if(pos.contains("Sekretarz"))
+		else if (pos.contains("Sekretarz"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("omplementariusz"))
+		else if (pos.contains("omplementariusz"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("soba zarz¹dza"))
+		else if (pos.contains("soba zarz¹dza"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("³aœciciel"))
+		else if (pos.contains("³aœciciel"))
 			p.setDept(Dept.ZARZ¥D);
-		else if(pos.contains("³onek rady"))
+		else if (pos.contains("³onek rady"))
 			p.setDept(Dept.ZARZ¥D);
-		
+
 		else
 			p.setDept(Dept.INNY);
 		return p;
@@ -623,7 +636,8 @@ public class TransformORM {
 		parseLog.info("nip: " + nip + ", Ros=>[" + company.getRoss().size() + "]");
 		try {
 			if (company.getTurnover().doubleValue() > 0 && company.getTurnover() != null) {
-				company.setRos(company.getProfit().divide(company.getTurnover(), 4, RoundingMode.HALF_UP).multiply(new BigDecimal("100")));
+				company.setRos(company.getProfit().divide(company.getTurnover(), 4, RoundingMode.HALF_UP)
+						.multiply(new BigDecimal("100")));
 			}
 		} catch (Exception e) {
 			parseLogSkipped.info("nip: " + nip + ", unable to compute last ROS");

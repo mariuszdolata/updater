@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import updater.source.GLExcel;
 import updater.source.HbiExcel;
 import updater.source.SourceBase;
 
@@ -81,6 +82,11 @@ public class LoadFileXlsx extends Load {
 		this.number=number;
 		selectFile();
 	}
+	
+	public LoadFileXlsx(String filePath){
+		super();
+		selectFileUsingFilePath(filePath);
+	}
 
 	/**
 	 * Metoda odpowiedzialna za wybor pliku excela do importu
@@ -96,7 +102,20 @@ public class LoadFileXlsx extends Load {
 			logger.info("File selected - " + file.getPath());
 			loadData();
 		} else
-			logger.warn("The file not exist!");
+			logger.warn("The file doesn`t exist!");
+	}
+	/**
+	 * Metoda odpowiedzialna za wybor pliku excela z podaniem calkowitej sciezki
+	 * 
+	 * @param filePath
+	 */
+	public void selectFileUsingFilePath(String filePath){
+		file = new File(filePath);
+		if(file.exists()){
+			logger.info("File selected - "+file.getPath());
+			loadData();
+		}else
+			logger.warn("The file doesn`t exist! - filePath:"+filePath);
 	}
 
 	/**
@@ -251,6 +270,37 @@ public class LoadFileXlsx extends Load {
 			// zwrocenie listy rekordow
 			return data;
 		
+	}
+	
+	public List<GLExcel> readRowsXlsxGL(){
+		List<GLExcel> data = new ArrayList<GLExcel>();
+		Iterator<Row> rows =this.sheet.iterator();
+		while(rows.hasNext()){
+			GLExcel glExcel;
+			Row currentRow = rows.next();
+			Iterator<Cell> cells = currentRow.iterator();
+			String[] currentObject = new String [3]; //tylko imie i nazwisko;stanowisko/firma#1;Link do profilu
+			int i=0;
+			while(cells.hasNext()){
+				try {
+					Cell currentCell = cells.next();
+					CellValue value = returnCell(currentCell);
+					currentObject[i] = value.getStringValue();
+					i++;
+				} catch (Exception e) {
+					logger.error("readRows() problem - check out of band! i = "+i, e);
+					e.printStackTrace();
+				}
+			}
+			GLExcel oneRow = new GLExcel(currentObject);
+			if(oneRow.isValid()){
+				data.add(oneRow);
+			}else{
+				logger.warn("One row skipped, valid="+oneRow.isValid());
+			}
+		}
+		
+		return data;
 	}
 
 }
