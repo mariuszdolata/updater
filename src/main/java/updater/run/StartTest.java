@@ -42,6 +42,7 @@ public class StartTest {
 //		}
 		String filePath="D:\\updater\\sources\\1.xlsx";
 		LoadData loadDataGoldenLine = new LoadData(filePath, Source.GoldenLine, SourceFormat.xlsx);
+		TransformORM transformation = new TransformORM(entityManagerFactory, loadDataGoldenLine.getDataGl(), loadDataGoldenLine.getSource());
 		entityManagerFactory.close();
 	}
 }

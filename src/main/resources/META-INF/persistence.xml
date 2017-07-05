@@ -33,7 +33,7 @@
 			<property name="hibernate.connection.username" value="updater_test" />
 			<property name="hibernate.default_schema" value="updater_test" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.hbm2ddl.auto" value="create" />
 			<property name="hibernate.show_sql" value="false" />
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>

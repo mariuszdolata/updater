@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ public class TransformORM {
 	private List<? extends SourceBase> unsortedData;
 	private List<? extends SourceBase> sortedData;
 	private Map<String, Company> companies = new HashMap<String, Company>();
+	private List<Company> companiesList = new ArrayList<Company>();
 	private Source source;
 	private EntityManagerFactory entityManagerFactory;
 
@@ -54,6 +56,15 @@ public class TransformORM {
 
 	public void setUnsortedData(List<? extends SourceBase> unsortedData) {
 		this.unsortedData = unsortedData;
+	}
+
+	
+	public List<Company> getCompaniesList() {
+		return companiesList;
+	}
+
+	public void setCompaniesList(List<Company> companiesList) {
+		this.companiesList = companiesList;
 	}
 
 	public List<? extends SourceBase> getSortedData() {
@@ -102,6 +113,7 @@ public class TransformORM {
 		if (source == Source.HBI) {
 			ormHbi(unsortedData);
 		} else if (source == Source.GoldenLine) {
+			ormGoldenLine(unsortedData);
 
 		} else {
 			logger.error("Invalid source - this source is not implemented yet - source-" + source.toString());
@@ -113,9 +125,11 @@ public class TransformORM {
 	 */
 	public void ormGoldenLine(List<? extends SourceBase> unsorted){
 	//proces sortowania wg NIP oraz wybieranie wszystkich rekordow firmy pominiety ze wzgledu na charakter danych
-		while(!unsorted.isEmpty()){
-			
+		for(GLExcel row:(List<GLExcel>)unsorted){
+			Company c=glMapping(row);
+			this.getCompaniesList().add(c);
 		}
+		insertCompaniesList();
 	}
 
 	/**
@@ -173,49 +187,86 @@ public class TransformORM {
 	 * @param person
 	 * @return
 	 */
-	public Position hbiMappingPosition(String pos, Person person, Source source) {
+	public Position mappingPosition(String pos, Person person, Source source) {
 		Position p = new Position();
 		p.setSource(source);
 		p.setNip(person.getNip());
 		p.setPositionDesc(pos);
 		p.setPerson(person);
 		// Przydzielenie stopnia
-		if (pos.contains("Dyrektor"))
+		if (pos.toLowerCase().contains("dyrektor"))
 			p.setDegree(Degree.DYREKTOR);
-		else if (pos.contains("Kierownik"))
-			p.setDegree(Degree.KIEROWNIK);
-		else if (pos.contains("Cz³onek rady nadzorczej"))
+		else if (pos.toLowerCase().contains("kierownik"))
+			p.setDegree(Degree.KIEROWNIK);		
+		else if (pos.toLowerCase().contains("cz³onek rady nadzorczej"))
 			p.setDegree(Degree.CZ£ONEK_RADY_NADZORCZEJ);
-		else if (pos.contains("G³ówny Ksiêgowy"))
+		else if (pos.toLowerCase().contains("g³ówny Ksiêgowy"))
 			p.setDegree(Degree.G£ÓWNY_KSIÊGOWY);
-		else if (pos.contains("Cz³onek zarz¹du"))
+		else if (pos.toLowerCase().contains("cz³onek zarz¹du"))
 			p.setDegree(Degree.CZ£ONEK_ZARZ¥DU);
-		else if (pos.contains("Cz³onek rady"))
+		else if (pos.toLowerCase().contains("cz³onek rady"))
 			p.setDegree(Degree.CZ£ONEK_RADY_NADZORCZEJ);
-		else if (pos.contains("Partner"))
+		else if (pos.toLowerCase().contains("partner"))
 			p.setDegree(Degree.PARTNER);
-		else if (pos.contains("Prezes"))
+		else if (pos.toLowerCase().contains("prezes"))
 			p.setDegree(Degree.PREZES);
-		else if (pos.contains("Wiceprezes"))
+		else if (pos.toLowerCase().contains("iceprezes"))
 			p.setDegree(Degree.WICEPREZES);
-		else if (pos.contains("Specjalista"))
-			p.setDegree(Degree.SPACJALISTA);
-		else if (pos.contains("Prezesa"))
+		else if (pos.toLowerCase().contains("specjalista"))
+			p.setDegree(Degree.SPECJALISTA);
+		else if (pos.toLowerCase().contains("prezesa"))
 			p.setDegree(Degree.PREZES);
-		else if (pos.contains("W³aœciciel"))
+		else if (pos.toLowerCase().contains("w³aœciciel"))
 			p.setDegree(Degree.W£AŒCICIEL);
-		else if (pos.contains("Prokurent"))
+		else if (pos.toLowerCase().contains("prokurent"))
 			p.setDegree(Degree.PROKURENT);
-		else if (pos.contains("Pe³nomocnik"))
+		else if (pos.toLowerCase().contains("pe³nomocnik"))
 			p.setDegree(Degree.PE£NOMOCNIK);
-		else if (pos.contains("karbnik"))
+		else if (pos.toLowerCase().contains("skarbnik"))
 			p.setDegree(Degree.SKARBNIK);
-		else if (pos.contains("Sekretarz"))
+		else if (pos.toLowerCase().contains("sekretarz"))
 			p.setDegree(Degree.SEKRETARZ);
-		else if (pos.contains("omplementariusz"))
+		else if (pos.toLowerCase().contains("komplementariusz"))
 			p.setDegree(Degree.KOMPLEMENTARIUSZ);
-		else if (pos.contains("icedyrektor"))
+		else if (pos.toLowerCase().contains("icedyrektor"))
 			p.setDegree(Degree.DYREKTOR);
+		
+		else if (pos.toLowerCase().contains("manager"))
+			p.setDegree(Degree.KIEROWNIK);
+		else if (pos.toLowerCase().contains("leader"))
+			p.setDegree(Degree.KIEROWNIK);
+		else if (pos.toLowerCase().contains("menager"))
+			p.setDegree(Degree.KIEROWNIK);
+		else if (pos.toLowerCase().contains("menad¿er"))
+			p.setDegree(Degree.KIEROWNIK);
+		else if (pos.toLowerCase().contains("supervisor"))
+			p.setDegree(Degree.KIEROWNIK);
+		else if (pos.toLowerCase().contains("specjalista"))
+			p.setDegree(Degree.SPECJALISTA);
+		else if (pos.toLowerCase().contains("specialist"))
+			p.setDegree(Degree.SPECJALISTA);
+		else if (pos.toLowerCase().contains("spec"))
+			p.setDegree(Degree.SPECJALISTA);
+		else if (pos.toLowerCase().contains("ksiêgowy"))
+			p.setDegree(Degree.KSIÊGOWY);
+		else if (pos.toLowerCase().contains("accountant"))
+			p.setDegree(Degree.KSIÊGOWY);
+		else if (pos.toLowerCase().contains("starszy"))
+			p.setDegree(Degree.STARSZY);
+		else if (pos.toLowerCase().contains("senior"))
+			p.setDegree(Degree.STARSZY);
+		else if (pos.toLowerCase().contains("mlodszy"))
+			p.setDegree(Degree.M£ODSZY);
+		else if (pos.toLowerCase().contains("mlodszy"))
+			p.setDegree(Degree.M£ODSZY);
+		else if (pos.toLowerCase().contains("junior"))
+			p.setDegree(Degree.M£ODSZY);
+		else if (pos.toLowerCase().contains("in¿ynier"))
+			p.setDegree(Degree.IN¯YNIER);
+		else if (pos.toLowerCase().contains("inzynier"))
+			p.setDegree(Degree.IN¯YNIER);
+		else if (pos.toLowerCase().contains("engineer"))
+			p.setDegree(Degree.IN¯YNIER);
 
 		else
 			p.setDegree(Degree.INNY);
@@ -223,57 +274,110 @@ public class TransformORM {
 		// Przydzielenie dzia³u
 		if (pos.contains("eneralny"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("adzorczej"))
+		else if (pos.toLowerCase().contains("adzorczej"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("arz¹du"))
+		else if (pos.toLowerCase().contains("arz¹du"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("arz¹dzaj¹c"))
+		else if (pos.toLowerCase().contains("arz¹dzaj¹c"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("siêgowy"))
+		else if (pos.toLowerCase().contains("siêgowy"))
 			p.setDept(Dept.FINANSE);
-		else if (pos.contains("inansowy"))
+		else if (pos.toLowerCase().contains("inansowy"))
 			p.setDept(Dept.FINANSE);
-		else if (pos.contains("echnicznych"))
+		else if (pos.toLowerCase().contains("echnicznych"))
 			p.setDept(Dept.TECHNICZNY);
-		else if (pos.contains("przeda¿y"))
+		else if (pos.toLowerCase().contains("przeda¿y"))
 			p.setDept(Dept.SPRZEDA¯);
-		else if (pos.contains("arketingu"))
+		else if (pos.toLowerCase().contains("arketingu"))
 			p.setDept(Dept.SPRZEDA¯);
-		else if (pos.contains("rodukcji"))
+		else if (pos.toLowerCase().contains("rodukcji"))
 			p.setDept(Dept.PRODUKCJA);
-		else if (pos.contains("rokurent"))
+		else if (pos.toLowerCase().contains("rokurent"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("Partner"))
+		else if (pos.toLowerCase().contains("Partner"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("iceprezes"))
+		else if (pos.toLowerCase().contains("iceprezes"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("e³nomocnik"))
+		else if (pos.toLowerCase().contains("e³nomocnik"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("yrektora"))
+		else if (pos.toLowerCase().contains("yrektora"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("arz¹dzaj¹cego"))
+		else if (pos.toLowerCase().contains("arz¹dzaj¹cego"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("rezes"))
+		else if (pos.toLowerCase().contains("rezes"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("karbnik"))
+		else if (pos.toLowerCase().contains("karbnik"))
 			p.setDept(Dept.FINANSE);
-		else if (pos.contains("Sekretarz"))
+		else if (pos.toLowerCase().contains("Sekretarz"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("omplementariusz"))
+		else if (pos.toLowerCase().contains("omplementariusz"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("soba zarz¹dza"))
+		else if (pos.toLowerCase().contains("soba zarz¹dza"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("³aœciciel"))
+		else if (pos.toLowerCase().contains("³aœciciel"))
 			p.setDept(Dept.ZARZ¥D);
-		else if (pos.contains("³onek rady"))
+		else if (pos.toLowerCase().contains("³onek rady"))
 			p.setDept(Dept.ZARZ¥D);
-
+		else if (pos.toLowerCase().contains("kontroler jakoœci"))
+			p.setDept(Dept.QA);
+		else if (pos.toLowerCase().contains("jakosci"))
+			p.setDept(Dept.QA);
+		else if (pos.toLowerCase().contains("quality"))
+			p.setDept(Dept.QA);
+		else if (pos.toLowerCase().contains("QA"))
+			p.setDept(Dept.QA);
+		else if (pos.toLowerCase().contains("Q/A"))
+			p.setDept(Dept.QA);
+		else if (pos.toLowerCase().contains("Q-A"))
+			p.setDept(Dept.QA);
+		else if (pos.toLowerCase().contains("produkcji"))
+			p.setDept(Dept.PRODUKCJA);
+		else if (pos.toLowerCase().contains("sales"))
+			p.setDept(Dept.SPRZEDA¯);
+		else if (pos.toLowerCase().contains("handlowy"))
+			p.setDept(Dept.SPRZEDA¯);
+		else if (pos.toLowerCase().contains("handel"))
+			p.setDept(Dept.SPRZEDA¯);
+		else if (pos.toLowerCase().contains("handlowego"))
+			p.setDept(Dept.SPRZEDA¯);
+		else if (pos.toLowerCase().contains("BHP"))
+			p.setDept(Dept.BHP);
+		else if (pos.toLowerCase().contains("R&D"))
+			p.setDept(Dept.RD);
+		else if (pos.toLowerCase().contains("RD"))
+			p.setDept(Dept.RD);
+		else if (pos.toLowerCase().contains("R-D"))
+			p.setDept(Dept.RD);
+		else if (pos.toLowerCase().contains("R/D"))
+			p.setDept(Dept.RD);
+		else if (pos.toLowerCase().contains("R\\D"))
+			p.setDept(Dept.RD);
+		else if (pos.toLowerCase().contains("IT"))
+			p.setDept(Dept.IT);
+		else if (pos.toLowerCase().contains("I-T"))
+			p.setDept(Dept.IT);
+		else if (pos.toLowerCase().contains("rekrutacji"))
+			p.setDept(Dept.HR);
+		else if (pos.toLowerCase().contains("HR"))
+			p.setDept(Dept.HR);
+		else if (pos.toLowerCase().contains("H/R"))
+			p.setDept(Dept.HR);
+		else if (pos.toLowerCase().contains("H-R"))
+			p.setDept(Dept.HR);
+		else if (pos.toLowerCase().contains("human resource"))
+			p.setDept(Dept.HR);
 		else
 			p.setDept(Dept.INNY);
 		return p;
 	}
-
-	public Company GLMapping(GLExcel row){
+/**
+ * Metoda tworzaca obiekt klasy Company z danych uzyskanych z GL
+ * W odroznieniu od HBI dane te sa osobowe dlatego do stworzenia uzywana jest
+ * jedna instancja obiektu GLExcel, a nie lista jak w przypadki HBI (kwestia mapowania)
+ * @param row
+ * @return
+ */
+	public Company glMapping(GLExcel row){
 		Company company = new Company();
 		//metoda tylko dla GoldenLine
 		company.setSource(Source.GoldenLine);
@@ -286,41 +390,55 @@ public class TransformORM {
 		String[] split=row.getImieINazwisko().split(" ");
 		//warunek dla imienia i nazwiska
 		//warunek konieczny aby kontunuowac parsowanie danych
+		Person person = new Person(0L, company, Source.GoldenLine);
 		if(split.length>=2){
-			Person person = new Person(0L, company, Source.GoldenLine);
 			person.setFirstName(split[0]);
 			person.setLastName(split[split.length-1]);
 			person.setFullName(split[0]+" "+split[split.length-1]);
 			
 		//mapowanie stanowiska oraz nazwy firmy
-			String[] splitPosition = row.getStanowiskoFirma().split(" - ");
+			String[] splitPosition = row.getStanowiskoFirma().split("-");
+			//idealna sytuacja stanowisko - firma
 			if(splitPosition.length==2){
-				
-				
-				/***
-				 * 
-				 */
-				
-				
-				
+				String stanowisko = splitPosition[0];
+				String firma = splitPosition[1];
+				if(firma.length()>0){
+					company.setName(firma);
+					person.setPosition(stanowisko);
+					person.getPositions().add(mappingPosition(stanowisko, person, person.getSource()));
+				}
+				logger.info("Found an information. Person="+split[0]+" "+split[split.length-1]+", Row="+row.getStanowiskoFirma()+", size="+splitPosition.length);
+							
 				
 				//company.setName();
 			}else if(splitPosition.length>=2){
+				String firma=splitPosition[splitPosition.length-1];
+				String stanowisko ="";
+				for(int i=0;i<splitPosition.length-2;i++){
+					stanowisko+=splitPosition[i];
+				}
+				if(firma.length()>0){
+					company.setName(firma);
+					person.setPosition(stanowisko);
+					person.getPositions().add(mappingPosition(stanowisko, person, person.getSource()));
+				}
 				
+//				logger.info("Found an information about company. Person="+split[0]+" "+split[split.length-1]+", Row="+row.getStanowiskoFirma()+", size="+splitPosition.length);
 			}else{
-				logger.warn("Unable to find an information about position in company");
+//				logger.warn("Unable to find an information about position in company. Person="+split[0]+" "+split[split.length-1]+", Row="+row.getStanowiskoFirma()+", size="+splitPosition.length);
 			}
 			
 		}else
 			logger.warn("Unable to create Person object for data from GoldenLine. Row="+row.toString());
-		
+		company.getPersons().add(person);	
 		return company;
 	}
 	/**
 	 * Metoda tworzaca obiekt klasy Company z subListy wczytanej z excela dla
 	 * HBI
 	 * 
-	 * @param subList
+	 * @param subList - lista zawierajaca wszystkie dane dotyczace jednej firmy
+	 * (wczesniej posortowana lista po NIPie)
 	 * @return Company company - gotowy obiekt, ktory mozna wstawic do bazy
 	 *         danych
 	 */
@@ -338,7 +456,7 @@ public class TransformORM {
 				if (parts[0] != parts[0].toUpperCase()) {
 					// osoba
 					p.setPosition(parts[1]);
-					Position position = hbiMappingPosition(parts[1], p, this.getSource());
+					Position position = mappingPosition(parts[1], p, this.getSource());
 					p.getPositions().add(position);
 					String fullName = parts[0].trim();
 					parseLog.debug("nip: " + nip + ", fullName=" + fullName);
@@ -699,12 +817,28 @@ public class TransformORM {
 		entityManager.getTransaction().begin();
 		logger.info("transaction begin");
 		for (Company c : this.getCompanies().values()) {
-			entityManager.persist(c);
+			if(c.getName()!=null){
+				entityManager.persist(c);				
+			}
 		}
 		entityManager.getTransaction().commit();
 		logger.info("transaction.commit");
 		entityManager.close();
 
+	}
+	public void insertCompaniesList(){
+		logger.info("EMF ready to create");
+		EntityManager entityManager = this.getEntityManagerFactory().createEntityManager();
+		logger.info("transaction begin");
+		entityManager.getTransaction().begin();
+		for (Company c : this.getCompaniesList()) {
+			if(c.getName()!=null){
+				entityManager.persist(c);
+			}
+		}
+		entityManager.getTransaction().commit();
+		logger.info("transaction.commit");
+		entityManager.close();
 	}
 
 	public Pair findLastTurnover(Set<Turnover> turnovers) {
