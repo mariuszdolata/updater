@@ -64,14 +64,14 @@ public class UpdaterComparatorRepository {
 	}
 	
 	/**
-	 * Metoda pobierajaca wszystkie firmy z bazy danych (tylko nip, regon, krs, nazwe i miasto) w celach porownawczych
+	 * Metoda pobierajaca wszystkie firmy z bazy danych fetch LAZY
 	 * @return
 	 */
 	public List<Company> getAllCompaniesFromDB(){
-		List<Company> allCompanies = new ArrayList<Company>();
 		EntityManager em = this.getEntityManagerFactory().createEntityManager();
-		
-		
+		em.getTransaction().begin();
+		List<Company> allCompanies = em.createQuery("Select c From Company c").getResultList();		
+		em.getTransaction().commit();
 		em.close();
 		return allCompanies;
 	}
