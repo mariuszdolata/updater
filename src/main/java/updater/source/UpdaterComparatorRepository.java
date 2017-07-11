@@ -97,6 +97,10 @@ public class UpdaterComparatorRepository {
 	
 	/**
 	 * Metoda iterujaca nowe firmy
+	 * Glowna metoda algorytmu, ktora sprawdza wszystkie nowopowstale obiekty czy istnieja ich odpowiedniki w bazie.
+	 * Najwazniejszymi kryteriami porownawczymi dla firm sa: NIP, Regon oraz KRS.
+	 * Kryterium pomocniczym jest nazwa firmy wraz z miastem.
+	 * Nazwa firmy powinna byc matchowana po przerobieniu na male litery, pozbyciu siê typow spolek, trimie itd. 
 	 * @param newCompanies - lista dodawanych firm
 	 * @param repository - lista firm z bazy
 	 */
