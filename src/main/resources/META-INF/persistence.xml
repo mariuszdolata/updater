@@ -38,5 +38,43 @@
 			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
 		</properties>
 	</persistence-unit>
+	
+	<persistence-unit name="updater_test"
+		transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<class>updater.structure.Company</class>
+		<class>updater.structure.Person</class>
+		<class>updater.structure.CompanyEmail</class>
+		<class>updater.structure.PersonEmail</class>
+		<class>updater.structure.Employment</class>
+		<class>updater.structure.Imports</class>
+		<class>updater.structure.Exports</class>
+		<class>updater.structure.Phone</class>
+		<class>updater.structure.Pkd</class>
+		<class>updater.structure.Profit</class>
+		<class>updater.structure.Ros</class>
+		<class>updater.structure.Sic</class>
+		<class>updater.structure.Turnover</class>
+		<class>updater.structure.Website</class>
+		<class>updater.structure.Wehicle</class>
+		<class>updater.structure.Domain</class>
+		<class>updater.structure.PersonEmail</class>
+		<class>updater.structure.Position</class>
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
+			<property name="hibernate.connection.password" value="updater" />
+			<property name="hibernate.connection.url"
+				value="jdbc:mysql://localhost:3306/updater?useTimezone=true&amp;serverTimezone=GMT" />
+
+			<property name="hibernate.connection.username" value="updater" />
+			<property name="hibernate.default_schema" value="updater" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+										<!-- 			tylko UPDATE - to jest modul testowy -->
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="false" />
+			<!-- <property name="hibernate.connection.requireSSL" value="false"/> -->
+		</properties>
+	</persistence-unit>
 
 </persistence>

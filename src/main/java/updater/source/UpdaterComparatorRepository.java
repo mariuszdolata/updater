@@ -388,16 +388,7 @@ public class UpdaterComparatorRepository {
 		this.companyTypePattern.add(new CompanyTypeRegExp("a",  spa + letter));
 	}
 	
-	/*
-	 * DO WYRZUCENIA
-	 */
 	
-	public int addInt(int a, int b){
-		return a+b;
-	}
-	public String concat(String s1, String s2){
-		return s1+s2;
-	}
 }
 
 
