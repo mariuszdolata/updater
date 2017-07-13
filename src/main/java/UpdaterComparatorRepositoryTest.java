@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -25,6 +26,7 @@ public class UpdaterComparatorRepositoryTest {
 	protected static UpdaterComparatorRepository u = new UpdaterComparatorRepository();
 	protected static Company c1, c2, c3, c4, c5;
 	private static List<Company> repository;
+	public Logger logger = Logger.getLogger(UpdaterComparatorRepositoryTest.class);
 
 	/**
 	 * Pobiera wszystkie firmy
@@ -71,137 +73,73 @@ public class UpdaterComparatorRepositoryTest {
 	}
 	
 	@Test
-	public void findKrsTest1(){
+	public void findKrsTest(){
 		Company cTemp = new Company();
 		cTemp.setKrs(221649L);
 		Company actual = u.findKrs(cTemp, repository);
 		assertEquals(c1, actual);
-	}
-	@Test
-	public void findKrsTest2(){
-		Company cTemp = new Company();
 		cTemp.setKrs(403608L);
-		Company actual = u.findKrs(cTemp, repository);
+		actual = u.findKrs(cTemp, repository);
 		assertEquals(c2, actual);
-	}
-	@Test
-	public void findKrsTest3(){
-		Company cTemp = new Company();
 		cTemp.setKrs(437423L);
-		Company actual = u.findKrs(cTemp, repository);
+		actual = u.findKrs(cTemp, repository);
 		assertEquals(c3, actual);
-	}
-	@Test
-	public void findKrsTest4(){
-		Company cTemp = new Company();
 		cTemp.setKrs(337350L);
-		Company actual = u.findKrs(cTemp, repository);
+		actual = u.findKrs(cTemp, repository);
 		assertEquals(c4, actual);
-	}
-	@Test
-	public void findKrsTest5(){
-		Company cTemp = new Company();
 		cTemp.setKrs(373201L);
-		Company actual = u.findKrs(cTemp, repository);
+		actual = u.findKrs(cTemp, repository);
 		assertEquals(c5, actual);
 	}
 	@Test
-	public void findRegonTest1(){
+	public void findRegonTest(){
 		Company cTemp = new Company();
 		cTemp.setRegon(672754000L);
 		Company actual=u.findRegon(cTemp, repository);
 		assertEquals(c1, actual);
-	}
-	@Test
-	public void findRegonTest2(){
-		Company cTemp = new Company();
 		cTemp.setRegon(301963270L);
-		Company actual=u.findRegon(cTemp, repository);
+		actual=u.findRegon(cTemp, repository);
 		assertEquals(c2, actual);
-	}
-	@Test
-	public void findRegonTest3(){
-		Company cTemp = new Company();
 		cTemp.setRegon(302247801L);
-		Company actual=u.findRegon(cTemp, repository);
+		actual=u.findRegon(cTemp, repository);
 		assertEquals(c3, actual);
-	}
-	@Test
-	public void findRegonTest4(){
-		Company cTemp = new Company();
 		cTemp.setRegon(301209112L);
-		Company actual=u.findRegon(cTemp, repository);
+		actual=u.findRegon(cTemp, repository);
 		assertEquals(c4, actual);
-	}
-	@Test
-	public void findRegonTest5(){
-		Company cTemp = new Company();
 		cTemp.setRegon(142721347L);
-		Company actual=u.findRegon(cTemp, repository);
+		actual=u.findRegon(cTemp, repository);
 		assertEquals(c5, actual);
-	}
-	@Test
-	public void findRegonTest6(){
-		Company cTemp = new Company();
 		cTemp.setRegon(142721347L);
-		Company actual=u.findRegon(cTemp, repository);
+		actual=u.findRegon(cTemp, repository);
 		assertNotEquals(c4, actual);
-	}
-	@Test
-	public void findRegonTest7(){
-		Company cTemp = new Company();
 		cTemp.setRegon(17L);
-		Company actual=u.findRegon(cTemp, repository);
+		actual=u.findRegon(cTemp, repository);
 		assertNull(actual);
 	}
-
+	
 	@Test
-	public void findNipTest1() {
+	public void findNipTest() {
 			Company cTemp=new Company();
 			cTemp.setNip(9482239619L);
 			Company actual=u.findNip(cTemp, repository);
 			assertEquals(c1, actual);
-	}
-	@Test
-	public void findNipTest2() {
-			Company cTemp=new Company();
 			cTemp.setNip(9721236602L);
-			Company actual=u.findNip(cTemp, repository);
+			actual=u.findNip(cTemp, repository);
 			assertEquals(c2, actual);
-	}
-	@Test
-	public void findNipTest3() {
-			Company cTemp=new Company();
 			cTemp.setNip(9721241193L);
-			Company actual=u.findNip(cTemp, repository);
+			actual=u.findNip(cTemp, repository);
 			assertEquals(c3, actual);
-	}
-	@Test
-	public void findNipTest4() {
-			Company cTemp=new Company();
 			cTemp.setNip(9680943744L);
-			Company actual=u.findNip(cTemp, repository);
+			actual=u.findNip(cTemp, repository);
 			assertEquals(c4, actual);
-	}
-	@Test
-	public void findNipTest5() {
-			Company cTemp=new Company();
 			cTemp.setNip(9512329908L);
-			Company actual=u.findNip(cTemp, repository);
+			actual=u.findNip(cTemp, repository);
 			assertEquals(c5, actual);
-	}
-	@Test
-	public void findNipTest6() {
-			Company cTemp=new Company();
 			cTemp.setNip(951232995408L);
-			Company actual=u.findNip(cTemp, repository);
+			actual=u.findNip(cTemp, repository);
 			assertNull(actual);
-	}
-	@Test
-	public void findNipTest7() {
-			Company cTemp=new Company();
 			cTemp.setNip(8L);
-			Company actual=u.findNip(cTemp, repository);
+			actual=u.findNip(cTemp, repository);
 			assertNotEquals(c5, actual);
 	}
 	@Ignore
@@ -214,254 +152,96 @@ public class UpdaterComparatorRepositoryTest {
 
 	@Test
 	public void pimpCompanyNameTest() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spó³ka jawna");
+		String actual = u.pimpCompanyName("abc spó³ka jawna");
 		assertEquals("ABC", actual);
-	}
+		actual = u.pimpCompanyName("abc sp jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spj");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp j");
+		
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp. jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spolka jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spólka jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spo³ka jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc-spó³ka jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc    spó³ka      jawna");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spzoo");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp zoo");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp z.oo");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp z. o. o.");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp z o.o.");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp zoo.");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp. zo.o.");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spó³ka z ograniczon¹ odpowiedzialnoœci¹");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spó³ka z ograniczona odpowiedzialnoscia");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp zoo");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc z oo");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc zoo");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spó³ka partnerska");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spolka partnerska");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc partnerska");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp partnerska");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp.partnerska");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spó³ka komandytowa");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc spolka komandytowa");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc sp komandytowa");
+		assertEquals("ABC", actual);
+		actual = u.pimpCompanyName("abc zoo");
+		assertEquals("ABC", actual);
 
+	}
+	
+	@Ignore
+	@SuppressWarnings("deprecation")
 	@Test
-	public void pimpCompanyNameTest2() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp jawna");
-		assertEquals("ABC", actual);
+	public void testMatching(){
+		double result=u.testLev("String1blablabla","String1blabla bla");
+		logger.info("result="+result);
+		assertEquals(1, result);
 	}
-
+	
+	
+	//@Ignore
 	@Test
-	public void pimpCompanyNameTest3() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp. jawna");
-		assertEquals("ABC", actual);
+	public void matchingNameTest(){
+		logger.info("liczba firm z repozytorium="+repository.size());
+	
+		TypedQuery<Company> q=em.createQuery("SELECT c FROM Company c WHERE name = :name", Company.class);
+		q.setParameter("name", "ZAK£AD ENERGETYKI CIEPLNEJ SP Z O O");
+		List<Company> companies=q.getResultList();
+		logger.info("liczba firm z companies="+companies.size());
+		List<Company> actual=u.matchingName("ZAK£AD ENERGETYKI CIEPLNEJ SP Z O O", (double)0.00, repository);
+		for(Company cc:actual){
+			logger.info("=>"+cc.getName());
+		}
+//		logger.info("liczba firm z repozytorium="+companies.size()+", actual="+actual.size());
+		assertEquals(companies.size(), actual.size());
 	}
-
-	@Test
-	public void pimpCompanyNameTest4() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spolka jawna");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest5() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spólka jawna");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest6() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spo³ka jawna");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest7() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc-spó³ka jawna");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest8() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc    spó³ka      jawna");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest9() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spzoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest20() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest21() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp z.oo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest22() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp z. o. o.");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest23() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp z o.o.");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest24() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp zoo.");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest25() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp. zo.o.");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest26() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spó³ka z ograniczon¹ odpowiedzialnoœci¹");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest27() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spó³ka z ograniczona odpowiedzialnoscia");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest28() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest29() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc z oo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest30() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest31() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spó³ka partnerska");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest32() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spolka partnerska");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest33() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc partnerska");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest37() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp partnerska");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest38() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp.partnerska");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest34() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spó³ka komandytowa");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest35() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc spolka komandytowa");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest36() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc sp komandytowa");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest39() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest40() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest41() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest42() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest43() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest44() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest45() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
-	@Test
-	public void pimpCompanyNameTest46() {
-		UpdaterComparatorRepository ucr = new UpdaterComparatorRepository();
-		String actual = ucr.pimpCompanyName("abc zoo");
-		assertEquals("ABC", actual);
-	}
-
 }

@@ -227,14 +227,18 @@ public class UpdaterComparatorRepository {
 	 */
 	public List<Company> findName(Company c, List<Company> repository, double minScore){
 		List<Company> matchedCompanies = new ArrayList<Company>();
+		List<Company> foundCompanies = new ArrayList<Company>();
 		String wantedName=c.getName();
 		for(Company r:repository){
 			//nie mozna przerwac iteracji po znalezieniu firmy
 			if(r.getName()==wantedName){
-				matchedCompanies.add(r);
+				foundCompanies.add(r);
 			}else{
-				matchingName(wantedName, minScore, repository, matchedCompanies);
+				matchedCompanies = matchingName(wantedName, minScore, repository);
 			}
+		}
+		for(Company comp:matchedCompanies){
+			foundCompanies.add(comp);
 		}
 		return matchedCompanies;
 	}
@@ -246,17 +250,24 @@ public class UpdaterComparatorRepository {
 	 * @param repository
 	 * @param matchedCompanies - lista znalezionych firm (zwracana przez referencje!)
 	 */
-	public void matchingName(String wantedName, double minScore, List<Company> repository, List<Company> matchedCompanies){
+	public List<Company> matchingName(String wantedName, double minScore, List<Company> repository ){
 		//wantedName - usuniecie typow spolek, wzorowanie sie na matchingu
+		List<Company> matchedCompanies = new ArrayList<Company> ();
 		wantedName=pimpCompanyName(wantedName);
 		NormalizedLevenshtein l = new NormalizedLevenshtein();
 		double currentScore=0;
 		for(Company r:repository){
-			if(l.distance(wantedName, r.getName())>=minScore){
+			if(l.distance(wantedName, pimpCompanyName(r.getName()))<=minScore){
 				matchedCompanies.add(r);
 				matchedLog.info("dist="+l.distance(wantedName, r.getName())+", c.name="+wantedName+", r.name"+r.getName()+", minScore="+minScore);
 			}
 		}
+		return matchedCompanies;
+	}
+	
+	public double testLev(String s1, String s2){
+		NormalizedLevenshtein l = new NormalizedLevenshtein();
+		return l.distance(s1, s2);
 	}
 	
 	
@@ -379,13 +390,13 @@ public class UpdaterComparatorRepository {
 		this.companyTypePattern.add(new CompanyTypeRegExp("spzoo", letter + spolkaPattern + spzoo + letter));
 		this.companyTypePattern.add(new CompanyTypeRegExp("zoo",  spzoo + letter));
 		this.companyTypePattern.add(new CompanyTypeRegExp("spj", letter + spolkaPattern + spj + letter));
-		this.companyTypePattern.add(new CompanyTypeRegExp("j",  spj + letter));
+//		this.companyTypePattern.add(new CompanyTypeRegExp("j",  spj + letter));
 		this.companyTypePattern.add(new CompanyTypeRegExp("spp", letter + spolkaPattern + spp + letter));
-		this.companyTypePattern.add(new CompanyTypeRegExp("p", spp + letter));
+//		this.companyTypePattern.add(new CompanyTypeRegExp("p", spp + letter));
 		this.companyTypePattern.add(new CompanyTypeRegExp("spk", letter + spolkaPattern + spk + letter));
-		this.companyTypePattern.add(new CompanyTypeRegExp("k",  spk + letter));
+//		this.companyTypePattern.add(new CompanyTypeRegExp("k",  spk + letter));
 		this.companyTypePattern.add(new CompanyTypeRegExp("spa", letter + spolkaPattern + spa + letter));
-		this.companyTypePattern.add(new CompanyTypeRegExp("a",  spa + letter));
+//		this.companyTypePattern.add(new CompanyTypeRegExp("a",  spa + letter));
 	}
 	
 	
