@@ -38,6 +38,12 @@ public class Employment {
 		this.company = company;
 		this.source = source;
 	}
+	
+	public Employment() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_employment() {

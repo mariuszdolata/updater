@@ -432,7 +432,7 @@ public class UpdaterComparatorRepositoryTest {
 		assertEquals(1, result);
 	}
 
-	@Ignore
+	
 	@Test
 	public void matchingNameTest() {
 		logger.info("liczba firm z repozytorium=" + repository.size());
@@ -440,10 +440,12 @@ public class UpdaterComparatorRepositoryTest {
 		TypedQuery<Company> q = em.createQuery("SELECT c FROM Company c WHERE name = :name", Company.class);
 		q.setParameter("name", "ZAK£AD ENERGETYKI CIEPLNEJ SP Z O O");
 		List<Company> companies = q.getResultList();
+		for(Company c:companies)
+			logger.info("companies="+c.toString());
 		logger.info("liczba firm z companies=" + companies.size());
 		List<Company> actual = u.matchingName("ZAK£AD ENERGETYKI CIEPLNEJ SP Z O O", (double) 0.00, repository);
 		for (Company cc : actual) {
-			logger.info("=>" + cc.getName());
+			logger.info("actual" + cc.toString());
 		}
 		// logger.info("liczba firm z repozytorium="+companies.size()+",
 		// actual="+actual.size());
