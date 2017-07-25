@@ -19,13 +19,14 @@ import updater.structure.Person;
 public class UpdaterComparatorRepository {
 
 	public Logger matchedLog = Logger.getLogger("matchedLog");
-	private double minScore;
+	public Logger comparatorLog = Logger.getLogger("comparatorLog");
+	
 	/**
 	 * Lista danych firmowych (lub osobowych) przeznaczona do aktualizacji bazy
 	 */
 	private List<Company> companiesToUpdate;
 	/**
-	 * Lista firm pobrana z bazy danych (tylko nip, regon, krs, nazwa, miasto, typ)
+	 * Lista firm pobrana z bazy danych
 	 */
 	private List<Company> companiesFromDB;
 	private EntityManagerFactory entityManagerFactory;
@@ -34,63 +35,36 @@ public class UpdaterComparatorRepository {
 	 * Lista typow spolek (do uzupelnienia)
 	 */
 	private List<CompanyTypeRegExp> companyTypePattern = new ArrayList<CompanyTypeRegExp>();
+		
+	private double maxScore;
 	
-	
-	
+	public double getMaxScore() {
+		return maxScore;
+	}
+	public void setMaxScore(double maxScore) {
+		this.maxScore = maxScore;
+	}
 	public List<Company> getCompaniesToUpdate() {
 		return companiesToUpdate;
 	}
-
-
-
 	public void setCompaniesToUpdate(List<Company> companiesToUpdate) {
 		this.companiesToUpdate = companiesToUpdate;
 	}
-
-
-
 	public List<Company> getCompaniesFromDB() {
 		return companiesFromDB;
 	}
-
-
-
 	public void setCompaniesFromDB(List<Company> companiesFromDB) {
 		this.companiesFromDB = companiesFromDB;
 	}
-
-
-
 	public EntityManagerFactory getEntityManagerFactory() {
 		return entityManagerFactory;
 	}
-
-
-
 	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
 		this.entityManagerFactory = entityManagerFactory;
 	}
-
-
-
-	public double getMinScore() {
-		return minScore;
-	}
-
-
-
-	public void setMinScore(double minScore) {
-		this.minScore = minScore;
-	}
-
-
-
 	public List<CompanyTypeRegExp> getCompanyTypePattern() {
 		return companyTypePattern;
 	}
-
-
-
 	public void setCompanyTypePattern(List<CompanyTypeRegExp> companyTypePattern) {
 		this.companyTypePattern = companyTypePattern;
 	}
@@ -104,11 +78,27 @@ public class UpdaterComparatorRepository {
 	}
 	
 
-	public UpdaterComparatorRepository(EntityManagerFactory emf, List<Company> companiesToUpdate, double minScore) {
+	public UpdaterComparatorRepository(EntityManagerFactory emf, List<Company> companiesToUpdate, double maxScore) {
 		this.setEntityManagerFactory(emf);
 		this.setCompaniesToUpdate(companiesToUpdate);
-		this.setMinScore(minScore);
+		this.setMaxScore(maxScore);
 		addRegExpPattern(); //dodanie wyrazen regularnych dla typow spolek
+		comparatorRun();
+	}
+	/**
+	 * Metoda uruchamiajaca mechanizm porownywania spolek
+	 */
+	public void comparatorRun(){
+		//pobranie wszystkich obiektow companies z bazy danych
+		comparatorLog.info("Przygotowanie do pobrania wszystkich obiektow z bazy danych");
+		try{
+			this.setCompaniesFromDB(getAllCompaniesFromDB());			
+		}catch(Exception e){
+			comparatorLog.info("problem z pobraniem obiektow Company z bazy danych - sprawdz zawartosc bazy");
+		}
+		comparatorLog.info("Pobieranie obiektow zostalo zakonczone");
+		iterateCompanies(this.getCompaniesToUpdate(), this.getCompaniesFromDB());
+		
 	}
 	
 	/**
@@ -134,26 +124,38 @@ public class UpdaterComparatorRepository {
 	 * @param repository - lista firm z bazy
 	 */
 	public void iterateCompanies(List<Company> newCompanies, List<Company> repository){
+		comparatorLog.info("wejscie w iterateCompanies(List<Company> newCompanies, List<Company> repository)");
 		for(Company c:newCompanies){
+			comparatorLog.info("Iteracja nowych firm, nowa="+c.getName());
 			Company nipFound = findNip(c, repository);
 			if(nipFound!=null){
 				//znaleziono firme z takim samym nipem
+				comparatorLog.info("Znaleziono now¹ po NIPie, nowaNIP="+c.getNip()+", staraNIP="+nipFound.getNip());
 			}else{
+				comparatorLog.info("Nie znaleziono nowej po NIP");
 				Company regonFound = findRegon(c, repository);
 				if(regonFound!=null){
 					//znaleziono firme z takim samym regonem
+					comparatorLog.info("Znaleziono now¹ po REGONie, nowaREGON="+c.getRegon()+", staraREGON="+regonFound.getRegon());
 				}else{
+					comparatorLog.info("Nie znaleziono nowej po REGON");
 					Company krsFound = findKrs(c, repository);
 					if(krsFound!=null){
 						//znaleziono firme z takim samym krsem
+						comparatorLog.info("Znaleziono now¹ po KRSie, nowaKRS="+c.getKrs()+", staraKRS="+krsFound.getKrs());
 					}else{
-						List<Company> nameFound=findName(c, repository, this.getMinScore());
+						comparatorLog.info("Nie znaleziono nowej po KRS");
+						List<Company> nameFound=findName(c, repository, this.getMaxScore());
 						if(!nameFound.isEmpty()){
 							//znaleziono liste firm z taka sama nazwa
+							comparatorLog.info("Znaleziono now¹ po NAZWIE, nowaNAZWA="+c.getName()+", staraNAZWA="+krsFound.getName());
 						}else{
+							comparatorLog.info("Nie znaleziono nowej po NAZWA");
 							if(c.getSource()==Source.GoldenLine || c.getSource()==Source.LinkedIn){
 								//dane osobowe POMINIECIE
+								comparatorLog.info("Wykryto dane osobowe, source="+c.getSource());
 							}else{
+								comparatorLog.info("Wykryto now¹ firme, ktora zostanie dodana do bazy danych");
 								//prawdopodobnie nowa fima DODANIE do bazy
 								addNewCompany(c);
 							}
@@ -246,20 +248,24 @@ public class UpdaterComparatorRepository {
 	/**
 	 * Metoda zwracajaca dopasowane firmy  - NormalizedLevenshtein
 	 * @param wantedName - nazwa firmy, ktora ma byc znaleziona
-	 * @param minScore - minimalny wspolczynnik decydujacy o zbieznosci nazw. 1.0=idealne dopasowanie
+	 * @param maxScore - maksymalny wspolczynnik decydujacy o zbieznosci nazw. 1.0=idealne dopasowanie
 	 * @param repository
 	 * @param matchedCompanies - lista znalezionych firm (zwracana przez referencje!)
 	 */
-	public List<Company> matchingName(String wantedName, double minScore, List<Company> repository ){
+	public List<Company> matchingName(String wantedName, double maxScore, List<Company> repository ){
 		//wantedName - usuniecie typow spolek, wzorowanie sie na matchingu
 		List<Company> matchedCompanies = new ArrayList<Company> ();
 		wantedName=pimpCompanyName(wantedName);
 		NormalizedLevenshtein l = new NormalizedLevenshtein();
 		double currentScore=0;
 		for(Company r:repository){
-			if(l.distance(wantedName, pimpCompanyName(r.getName()))<=minScore){
+			currentScore=l.distance(pimpCompanyName(wantedName), pimpCompanyName(r.getName()));
+			if(currentScore<=maxScore){
 				matchedCompanies.add(r);
-				matchedLog.info("dist="+l.distance(wantedName, r.getName())+", c.name="+wantedName+", r.name"+r.getName()+", minScore="+minScore);
+				double d = 28786.079999999998;
+				String score = String.format("%1.2f", currentScore);
+			
+				matchedLog.info("dist = "+score+", c.name = "+wantedName+", r.name = "+r.getName()+", maxScore = "+maxScore);
 			}
 		}
 		return matchedCompanies;
@@ -287,13 +293,27 @@ public class UpdaterComparatorRepository {
 			Pattern pattern = Pattern.compile(reg.getRegexp(), Pattern.CASE_INSENSITIVE);
 			Matcher matcher =pattern.matcher(name);
 			while(matcher.find()){
-				name=(String) name.trim().toUpperCase().subSequence(0, matcher.start());
+				try{
+					name=(String) name.trim().toUpperCase().subSequence(0, matcher.start());					
+				}catch(Exception e){
+					name=(String) name.trim().toUpperCase();
+				}
 			}
 			//UPPERCASE w przypadku nieznalezienia rodzaju spolki
 			
 		}
 		name=name.toUpperCase();
 		return name;
+	}
+	
+	void addData(Company c, Company base){
+		List<Person> newPersons = findNewPersons(c, base);
+		if(!newPersons.isEmpty()){
+			matchedLog.info("znaleziono nowe osoby");
+			addNewPersons(newPersons, base);
+		}else{
+			matchedLog.info("nie znaleziono nowych osób");
+		}
 	}
 	
 	/**
