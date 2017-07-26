@@ -170,7 +170,7 @@ public class Company {
 		this.metaHbi = metaHbi;
 	}
 
-	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Set<Person> getPersons() {
 		return persons;
 	}
@@ -268,7 +268,7 @@ public class Company {
 		this.wehicles = wehicles;
 	}
 
-	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Set<Domain> getDomains() {
 		return domains;
 	}
@@ -493,7 +493,7 @@ public class Company {
 		
 		
 	}
-	public String replacePolishCharacters(String s){
+	public static String replacePolishCharacters(String s){
 		return s.toLowerCase().replaceAll("ê", "e").replaceAll("ó", "o").replaceAll("¹", "a").replaceAll("œ", "s").replaceAll("³", "l").replaceAll("¿", "z").replaceAll("Ÿ", "z").replaceAll("æ", "c").replaceAll("ñ", "n");
 	}
 	/**

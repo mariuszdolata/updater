@@ -103,6 +103,11 @@ public class PersonEmail {
 		this.person = person;
 		this.email = email;
 	}
+	
+	public PersonEmail() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

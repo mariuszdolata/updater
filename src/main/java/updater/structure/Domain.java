@@ -36,8 +36,16 @@ public class Domain {
 		this.company = company;
 		this.source = source;
 	}
+	
 
 	
+public Domain() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+
 @Id
 @GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getId_domain() {

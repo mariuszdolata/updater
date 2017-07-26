@@ -52,6 +52,12 @@ public class Person {
 		this.company = company;
 		this.source = source;
 	}
+	
+	public Person() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	public long getIdPerson() {
@@ -123,7 +129,7 @@ public class Person {
 	public void setSource(Source source) {
 		this.source = source;
 	}
-	@OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Set<PersonEmail> getPersonEmails() {
 		return personEmails;
 	}
