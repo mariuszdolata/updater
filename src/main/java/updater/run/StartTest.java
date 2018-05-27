@@ -46,4 +46,8 @@ public class StartTest {
 //		entityManagerFactory.close();
 		logger.info("koniec");
 	}
+	
+	static void testtt() {
+		
+	}
 }
